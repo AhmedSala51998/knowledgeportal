@@ -355,7 +355,7 @@ $recent_posts = $recent_stmt->get_result();
 
               <?php while ($post = $recent_posts->fetch_assoc()): ?>
                 <div class="post-item">
-                  <img src="dashboard<?php echo $post['image_url'] ?: 'assets/img/blog/default-square.jpg'; ?>" 
+                  <img src="dashboard/<?php echo $post['image_url'] ?: 'assets/img/blog/default-square.jpg'; ?>" 
                       alt="<?php echo htmlspecialchars($post['title']); ?>" 
                       class="flex-shrink-0">
 
