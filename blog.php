@@ -1,3 +1,20 @@
+<?php
+require_once 'dashboard/config.php';
+
+// الاتصال
+$conn = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+$conn->set_charset("utf8mb4");
+
+// جلب آخر 5 مدونات
+$blogs_query = "SELECT * FROM blogs ORDER BY created_at DESC LIMIT 5";
+$blogs_result = $conn->query($blogs_query);
+
+// تحويل النتائج لمصفوفة
+$blogs = [];
+while ($row = $blogs_result->fetch_assoc()) {
+    $blogs[] = $row;
+}
+?>
 <!DOCTYPE php>
 <php lang="en">
 
