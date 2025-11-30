@@ -36,7 +36,7 @@ function getReferenceSectionById($id){
 
 function getReferenceSubSectionById($id){
     global $conn;
-    return $conn->query("SELECT * FROM section_references WHERE id = $id")->fetch_assoc();
+    return $conn->query("SELECT * FROM sections WHERE id = $id")->fetch_assoc();
 }
 
 // تجميع هيكل الاستدلال للمدونة
