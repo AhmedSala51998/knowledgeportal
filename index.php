@@ -1084,7 +1084,7 @@ while ($row = $blogs_result->fetch_assoc()) {
 
                           <article class="recent-post" data-aos="fade-up" data-aos-delay="<?php echo 100 + ($i * 80); ?>">
                               <div class="recent-img">
-                                  <img src="dasbboard/<?php echo $item['image_url'] ?: 'assets/img/blog/default.jpg'; ?>" 
+                                  <img src="dashboard/<?php echo $item['image_url'] ?: 'assets/img/blog/default.jpg'; ?>" 
                                       alt="" class="img-fluid" loading="lazy">
                               </div>
                               <div class="recent-content">
