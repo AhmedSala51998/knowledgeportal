@@ -68,7 +68,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // معالجة رفع الصورة
         $image_url = '';
         if (isset($_FILES['blog_image']) && $_FILES['blog_image']['error'] == 0) {
-            $allowed = ['jpg', 'jpeg', 'png', 'gif'];
+            $allowed = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
             $filename = $_FILES['blog_image']['name'];
             $filetype = pathinfo($filename, PATHINFO_EXTENSION);
 
