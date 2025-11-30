@@ -219,8 +219,8 @@ foreach ($system_ids as $sys_id) {
 
                 <div class="meta-top">
                   <ul>
-                    <li class="d-flex align-items-center"><i style="margin-left:5px" class="bi bi-person"></i> <a href="blog-details.php?id=<?php $id; ?>">بوابة المعرفة</a></li>
-                    <li class="d-flex align-items-center"><i style="margin-left:5px" class="bi bi-clock"></i> <a href="blog-details.php?id=<?php $id; ?>><time datetime="<?php echo date('Y-m-d', strtotime($blog['created_at'])); ?>"> <?php echo date("d F Y", strtotime($blog['created_at'])); ?></time></a></li>
+                    <li class="d-flex align-items-center"><i style="margin-left:5px" class="bi bi-person"></i> <a href="blog-details.php?id=<?php $blog_id; ?>">بوابة المعرفة</a></li>
+                    <li class="d-flex align-items-center"><i style="margin-left:5px" class="bi bi-clock"></i> <a href="blog-details.php?id=<?php $blog_id; ?>><time datetime="<?php echo date('Y-m-d', strtotime($blog['created_at'])); ?>"> <?php echo date("d F Y", strtotime($blog['created_at'])); ?></time></a></li>
                   </ul>
                 </div><!-- End meta top -->
 
