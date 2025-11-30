@@ -1,3 +1,20 @@
+<?php
+require_once 'dashboard/config.php';
+
+// الاتصال
+$conn = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+$conn->set_charset("utf8mb4");
+
+// جلب آخر 5 مدونات
+$blogs_query = "SELECT * FROM blogs ORDER BY created_at DESC LIMIT 5";
+$blogs_result = $conn->query($blogs_query);
+
+// تحويل النتائج لمصفوفة
+$blogs = [];
+while ($row = $blogs_result->fetch_assoc()) {
+    $blogs[] = $row;
+}
+?>
 <!DOCTYPE php>
 <php lang="en">
 
@@ -1010,158 +1027,87 @@
 
     <!-- Recent Posts Section -->
     <section id="recent-posts" class="recent-posts section" dir="rtl">
-
-      <!-- Section Title -->
-      <div class="container section-title">
-        <h2>أحدث المدونات</h2>
-        <p>مدوناتنا تقدم حلولاً عملية وإرشادات دقيقة لجميع المقيمين والمواطنين في المملكة العربية السعودية، مستندة إلى أنظمة وقوانين الدولة.</p>
-      </div><!-- End Section Title -->
-
-      <div class="container" data-aos="fade-up" data-aos-delay="100">
-
-        <div class="row">
-
-          <div class="col-lg-8" data-aos="fade-up" data-aos-delay="100">
-            <article class="featured-post">
-              <div class="featured-img">
-                <img src="assets/img/blog/blog-post-7.webp" alt="" class="img-fluid" loading="lazy">
-                <div class="featured-badge">مميز</div>
-              </div>
-
-              <div class="featured-content">
-                <div class="post-header">
-                  <a href="blog-details.php" class="category">الخدمات الإلكترونية</a>
-                  <span class="post-date">18 ديسمبر 2024</span>
-                </div>
-
-                <h2 class="post-title">
-                  <a href="blog-details.php">كيفية استخدام نظام أبشر لإنجاز معاملات الإقامة والعمل</a>
-                </h2>
-
-                <p class="post-excerpt">
-                  دليل شامل لكيفية تسجيل الدخول إلى منصة أبشر، الاستفادة من الخدمات المختلفة مثل تجديد الإقامات، إصدار التأشيرات، وبلاغات الهروب، وفقاً للأنظمة والمواد الرسمية في المملكة (نظام العمل السعودي ونظام الإقامة). يشرح المقال خطوات عملية مع صور توضيحية لتسهيل تجربة المستخدم.
-                </p>
-
-                <div class="post-footer">
-                  <div class="author-info">
-                    <img src="assets/img/user_icon.png" alt="" class="author-avatar">
-                    <div class="author-details">
-                      <span class="author-name">فيصل المطيري</span>
-                      <span class="read-time">5 دقائق قراءة</span>
-                    </div>
-                  </div>
-                  <a href="blog-details.php" class="read-more">اقرأ المزيد</a>
-                </div>
-              </div>
-            </article>
-
-            <article class="featured-post" data-aos="fade-up" data-aos-delay="400">
-              <div class="featured-img">
-                <img src="assets/img/blog/blog-post-3.webp" alt="" class="img-fluid" loading="lazy">
-                <div class="featured-badge">مميز</div>
-              </div>
-
-              <div class="featured-content">
-                <div class="post-header">
-                  <a href="blog-details.php" class="category">نظام العمل</a>
-                  <span class="post-date">16 ديسمبر 2024</span>
-                </div>
-
-                <h2 class="post-title">
-                  <a href="blog-details.php">الحقوق والواجبات للمقيمين وفق قانون العمل السعودي</a>
-                </h2>
-
-                <p class="post-excerpt">
-                  مقال يشرح بالتفصيل حقوق العمال الوافدة، ساعات العمل، الإجازات، وطريقة التعامل مع حالات المخالفة، استناداً إلى نظام العمل واللوائح التنفيذية في المملكة. يشمل أيضًا نصائح عملية لتقديم بلاغات وحل المشكلات عبر منصات مثل مكتب العمل وأبشر.
-                </p>
-
-                <div class="post-footer">
-                  <div class="author-info">
-                    <img src="assets/img/user_icon.png" alt="" class="author-avatar">
-                    <div class="author-details">
-                      <span class="author-name">فيصل المطيري</span>
-                      <span class="read-time">7 دقائق قراءة</span>
-                    </div>
-                  </div>
-                  <a href="blog-details.php" class="read-more">اقرأ المزيد</a>
-                </div>
-              </div>
-            </article>
-          </div><!-- End featured post -->
-
-          <div class="col-lg-4">
-
-            <article class="recent-post" data-aos="fade-up" data-aos-delay="200">
-              <div class="recent-img">
-                <img src="assets/img/blog/blog-post-5.webp" alt="" class="img-fluid" loading="lazy">
-              </div>
-              <div class="recent-content">
-                <a href="blog-details.php" class="category">الإقامات</a>
-                <h3 class="recent-title">
-                  <a href="blog-details.php">تجديد الإقامة في السعودية: خطوات وشروط واضحة</a>
-                </h3>
-                <div class="recent-meta">
-                  <span class="author">بقلم فيصل المطيري</span>
-                  <span class="date">15 ديسمبر 2024</span>
-                </div>
-              </div>
-            </article><!-- End recent post -->
-
-            <article class="recent-post" data-aos="fade-up" data-aos-delay="250">
-              <div class="recent-img">
-                <img src="assets/img/blog/blog-post-9.webp" alt="" class="img-fluid" loading="lazy">
-              </div>
-              <div class="recent-content">
-                <a href="blog-details.php" class="category">مكتب العمل</a>
-                <h3 class="recent-title">
-                  <a href="blog-details.php">كيفية تقديم بلاغات الهروب وحماية حقوقك كعامل</a>
-                </h3>
-                <div class="recent-meta">
-                  <span class="author">بقلم فيصل المطيري</span>
-                  <span class="date">12 ديسمبر 2024</span>
-                </div>
-              </div>
-            </article><!-- End recent post -->
-
-            <article class="recent-post" data-aos="fade-up" data-aos-delay="300">
-              <div class="recent-img">
-                <img src="assets/img/blog/blog-post-6.webp" alt="" class="img-fluid" loading="lazy">
-              </div>
-              <div class="recent-content">
-                <a href="blog-details.php" class="category">الخدمات الإلكترونية</a>
-                <h3 class="recent-title">
-                  <a href="blog-details.php">استعراض خطوات حجز المواعيد عبر منصة وزارة الموارد البشرية</a>
-                </h3>
-                <div class="recent-meta">
-                  <span class="author">بقلم فيصل المطيري</span>
-                  <span class="date">10 ديسمبر 2024</span>
-                </div>
-              </div>
-            </article><!-- End recent post -->
-
-            <article class="recent-post" data-aos="fade-up" data-aos-delay="350">
-              <div class="recent-img">
-                <img src="assets/img/blog/blog-post-8.webp" alt="" class="img-fluid" loading="lazy">
-              </div>
-              <div class="recent-content">
-                <a href="blog-details.php" class="category">التقنية</a>
-                <h3 class="recent-title">
-                  <a href="blog-details.php">تطبيقات الهواتف لمتابعة الخدمات الحكومية بسهولة</a>
-                </h3>
-                <div class="recent-meta">
-                  <span class="author">بقلم فيصل المطيري</span>
-                  <span class="date">8 ديسمبر 2024</span>
-                </div>
-              </div>
-            </article><!-- End recent post -->
-
-          </div>
-
+        <div class="container section-title">
+            <h2>أحدث المدونات</h2>
+            <p>مدوناتنا تقدم حلولاً عملية وإرشادات دقيقة لجميع المقيمين والمواطنين في المملكة العربية السعودية، مستندة إلى أنظمة وقوانين الدولة.</p>
         </div>
 
-      </div>
+        <div class="container" data-aos="fade-up" data-aos-delay="100">
+            <div class="row">
 
-    </section><!-- /Recent Posts Section -->
+                <div class="col-lg-8" data-aos="fade-up" data-aos-delay="100">
+                    <?php if (!empty($blogs)): ?>
+                        <?php $featured = $blogs[0]; ?>
+                        <article class="featured-post">
+                            <div class="featured-img">
+                                <img src="dashboard/<?php echo $featured['image_url'] ?: 'assets/img/blog/default.jpg'; ?>" 
+                                    alt="" class="img-fluid" loading="lazy">
+                                <div class="featured-badge">مميز</div>
+                            </div>
+
+                            <div class="featured-content">
+                                <div class="post-header">
+                                    <span class="category">مدونة</span>
+                                    <span class="post-date"><?php echo date("d F Y", strtotime($featured['created_at'])); ?></span>
+                                </div>
+
+                                <h2 class="post-title">
+                                    <a href="blog-details.php?id=<?php echo $featured['id']; ?>">
+                                        <?php echo htmlspecialchars($featured['title']); ?>
+                                    </a>
+                                </h2>
+
+                                <p class="post-excerpt">
+                                    <?php echo mb_substr(strip_tags($featured['content']), 0, 200) . '...'; ?>
+                                </p>
+
+                                <div class="post-footer">
+                                    <div class="author-info">
+                                        <img src="assets/img/user_icon.png" alt="" class="author-avatar">
+                                        <div class="author-details">
+                                            <span class="author-name">بوابة المعرفة</span>
+                                            <span class="read-time">5 دقائق قراءة</span>
+                                        </div>
+                                    </div>
+                                    <a href="blog-details.php?id=<?php echo $featured['id']; ?>" class="read-more">اقرأ المزيد</a>
+                                </div>
+                            </div>
+                        </article>
+                    <?php endif; ?>
+                </div>
+
+
+                <div class="col-lg-4">
+
+                      <?php for ($i = 1; $i < count($blogs); $i++): ?>
+                          <?php $item = $blogs[$i]; ?>
+
+                          <article class="recent-post" data-aos="fade-up" data-aos-delay="<?php echo 100 + ($i * 80); ?>">
+                              <div class="recent-img">
+                                  <img src="dasbboard/<?php echo $item['image_url'] ?: 'assets/img/blog/default.jpg'; ?>" 
+                                      alt="" class="img-fluid" loading="lazy">
+                              </div>
+                              <div class="recent-content">
+                                  <span class="category">مدونة</span>
+                                  <h3 class="recent-title">
+                                      <a href="blog-details.php?id=<?php echo $item['id']; ?>">
+                                          <?php echo htmlspecialchars($item['title']); ?>
+                                      </a>
+                                  </h3>
+                                  <div class="recent-meta">
+                                      <span class="author">بوابة المعرفة</span>
+                                      <span class="date"><?php echo date("d F Y", strtotime($item['created_at'])); ?></span>
+                                  </div>
+                              </div>
+                          </article>
+
+                      <?php endfor; ?>
+
+                  </div>
+              </div>
+          </div>
+      </section>
+
 
     <!-- Contact Section -->
     <section id="contact" class="contact section light-background" dir="rtl">
