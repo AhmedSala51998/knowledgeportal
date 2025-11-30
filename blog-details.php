@@ -1,3 +1,92 @@
+<?php
+require_once 'dashboard/config.php';
+
+$conn = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+$conn->set_charset("utf8mb4");
+
+if (!isset($_GET['id'])) {
+    die("خطأ: لم يتم إرسال رقم المدونة.");
+}
+
+$blog_id = intval($_GET['id']);
+
+$sql = "SELECT * FROM blogs WHERE id = $blog_id";
+$result = $conn->query($sql);
+
+if ($result->num_rows == 0) {
+    die("لم يتم العثور على هذه المدونة.");
+}
+
+$blog = $result->fetch_assoc();
+
+function getReferenceSystemById($id){
+    global $conn;
+    return $conn->query("SELECT * FROM systems WHERE id = $id")->fetch_assoc();
+}
+
+function getReferenceArticleById($id){
+    global $conn;
+    return $conn->query("SELECT * FROM articles WHERE id = $id")->fetch_assoc();
+}
+
+function getReferenceSectionById($id){
+    global $conn;
+    return $conn->query("SELECT * FROM sections WHERE id = $id")->fetch_assoc();
+}
+
+function getReferenceSubSectionById($id){
+    global $conn;
+    return $conn->query("SELECT * FROM subsections WHERE id = $id")->fetch_assoc();
+}
+
+// تجميع هيكل الاستدلال للمدونة
+$hierarchy = [];
+
+$system_ids = !empty($blog['reference_system_id']) ? explode(',', $blog['reference_system_id']) : [];
+$article_ids = !empty($blog['reference_article_id']) ? explode(',', $blog['reference_article_id']) : [];
+$section_ids = !empty($blog['reference_section_id']) ? explode(',', $blog['reference_section_id']) : [];
+$subsection_ids = !empty($blog['reference_subsection_id']) ? explode(',', $blog['reference_subsection_id']) : [];
+
+foreach ($system_ids as $sys_id) {
+    $sys = getReferenceSystemById($sys_id);
+    if (!$sys) continue;
+
+    $hierarchy[$sys_id] = [
+        'title' => $sys['title'],
+        'articles' => []
+    ];
+
+    foreach ($article_ids as $art_id) {
+        $art = getReferenceArticleById($art_id);
+        if ($art && $art['system_id'] == $sys_id) {
+
+            $hierarchy[$sys_id]['articles'][$art_id] = [
+                'title' => $art['title'],
+                'sections' => []
+            ];
+
+            foreach ($section_ids as $sec_id) {
+                $sec = getReferenceSectionById($sec_id);
+                if ($sec && $sec['article_id'] == $art_id) {
+
+                    $hierarchy[$sys_id]['articles'][$art_id]['sections'][$sec_id] = [
+                        'title' => $sec['title'],
+                        'subsections' => []
+                    ];
+
+                    foreach ($subsection_ids as $sub_id) {
+                        $sub = getReferenceSubSectionById($sub_id);
+                        if ($sub && $sub['parent_id'] == $sec_id) {
+                            $hierarchy[$sys_id]['articles'][$art_id]['sections'][$sec_id]['subsections'][$sub_id] = $sub['title'];
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+?>
 <!DOCTYPE php>
 <php lang="en">
 
@@ -113,6 +202,7 @@
     <div class="container" dir="rtl">
       <div class="row">
 
+        <?php if ($blog): ?>
         <div class="col-lg-8">
 
           <!-- Blog Details Section -->
@@ -122,26 +212,20 @@
               <article class="article">
 
                 <div class="post-img">
-                  <img src="assets/img/blog/blog-post-1.webp" alt="" class="img-fluid">
+                  <img src="dashboard/<?php echo $blog['image_url'] ?: 'assets/img/blog/default.jpg'; ?>" alt="<?php echo htmlspecialchars($blog['title']); ?>" class="img-fluid">
                 </div>
 
-                <h2 class="title">خدمات المقيمين والمواطنين في المملكة العربية السعودية: تحديثات ونصائح مهمة</h2>
+                <h2 class="title"><?php echo htmlspecialchars($blog['title']); ?></h2>
 
                 <div class="meta-top">
                   <ul>
-                    <li class="d-flex align-items-center"><i style="margin-left:5px" class="bi bi-person"></i> <a href="blog-details.php">بوابة المعرفة</a></li>
-                    <li class="d-flex align-items-center"><i style="margin-left:5px" class="bi bi-clock"></i> <a href="blog-details.php"><time datetime="2025-11-30">30 نوفمبر 2025</time></a></li>
+                    <li class="d-flex align-items-center"><i style="margin-left:5px" class="bi bi-person"></i> <a href="blog-details.php?id=<?php $id; ?>">بوابة المعرفة</a></li>
+                    <li class="d-flex align-items-center"><i style="margin-left:5px" class="bi bi-clock"></i> <a href="blog-details.php?id=<?php $id; ?>><time datetime="<?php echo date('Y-m-d', strtotime($blog['created_at'])); ?>"> <?php echo date("d F Y", strtotime($blog['created_at'])); ?></time></a></li>
                   </ul>
                 </div><!-- End meta top -->
 
                 <div class="content">
-                  <p>
-                    في هذا المقال نستعرض أهم المستجدات المتعلقة بخدمات المقيمين والمواطنين في المملكة العربية السعودية، بما في ذلك متابعة الإقامات، بلاغات الهروب، الاستعلام عن العمالة، وتجديد التأشيرات. نغطي أيضًا التحديثات القانونية والإجراءات الرسمية وفق أنظمة وزارة الموارد البشرية والتنمية الاجتماعية ووزارة الداخلية.
-                  </p>
-
-                  <p>
-                    يهدف هذا المقال لتقديم نصائح عملية وإرشادات حول كيفية استخدام الخدمات الرقمية الرسمية، مثل منصة أبشر، لتسهيل حياتك اليومية وضمان التزامك بالقوانين واللوائح المعمول بها. بالإضافة إلى ذلك، نقدم شرحًا لكيفية التحقق من الوضع القانوني للعمالة والإبلاغ عن المخالفات بما يتوافق مع مواد وأنظمة الدولة.
-                  </p>
+                  <?php echo nl2br($blog['content']); ?>
 
                   <blockquote>
                     <p>
@@ -154,16 +238,16 @@
                 <div class="meta-bottom">
                   <i class="bi bi-folder"></i>
                   <ul class="cats">
-                    <li><a href="#">خدمات المقيمين والمواطنين</a></li>
+                    <li><a href="blogs.php">خدمات المقيمين والمواطنين</a></li>
                   </ul>
 
                   <i class="bi bi-tags"></i>
                   <ul class="tags">
-                    <li><a href="#">الإقامة</a></li>
-                    <li><a href="#">العمالة</a></li>
-                    <li><a href="#">القوانين</a></li>
-                    <li><a href="#">أبشر</a></li>
-                    <li><a href="#">النظام السعودي</a></li>
+                    <li><a href="blogs.php">الإقامة</a></li>
+                    <li><a href="blogs.php">العمالة</a></li>
+                    <li><a href="blogs.php">القوانين</a></li>
+                    <li><a href="blogs.php">أبشر</a></li>
+                    <li><a href="blogs.php">النظام السعودي</a></li>
                   </ul>
                 </div><!-- End meta bottom -->
 
@@ -184,7 +268,7 @@
                 <div class="d-flex align-items-center w-100">
                   <img src="assets/img/user_icon.png" class="rounded-circle flex-shrink-0" alt="">
                   <div style="margin-right: 10px;">
-                    <h4>فيصل المطيري</h4>
+                    <h4>بوابة المعرفة</h4>
                     <!--<div class="social-links">
                       <a href="https://x.com/#"><i class="bi bi-twitter-x"></i></a>
                       <a href="https://facebook.com/#"><i class="bi bi-facebook"></i></a>
@@ -200,62 +284,62 @@
             </div><!--/Blog Author Widget -->
 
             <div class="tags-widget widget-item">
-              <h3 class="widget-title">الاستدلال من قوانين مكتب العمل</h3>
-              
+              <h3 class="widget-title">الاستدلال من الأنظمة والقوانين</h3>
+
               <ul class="list-unstyled mt-3">
-                
-                <!-- نظام رئيسي -->
-                <li>
-                  <a href="#" class="category">نظام العمل <span class="badge bg-light text-dark px-2 py-1">(25)</span></a>
-                  
-                  <!-- المواد داخل النظام -->
-                  <ul class="list-unstyled ms-3">
-                    <li>
-                      <a href="#" class="category">المادة 1 <span class="badge bg-light text-dark px-2 py-1">(5)</span></a>
-                      
-                      <!-- الأجزاء داخل المادة -->
-                      <ul class="list-unstyled ms-3">
-                        <li>
-                          <a href="#" class="category">الجزء أ <span class="badge bg-light text-dark px-2 py-1">(2)</span></a>
-                          
-                          <!-- الأجزاء الفرعية داخل الجزء -->
-                          <ul class="list-unstyled ms-3">
-                            <li>
-                              <a href="#" class="category">الجزء الفرعي 1 <span class="badge bg-light text-dark px-2 py-1">(1)</span></a>
-                            </li>
-                            <li>
-                              <a href="#" class="category">الجزء الفرعي 2 <span class="badge bg-light text-dark px-2 py-1">(1)</span></a>
-                            </li>
-                          </ul>
-                        </li>
-                        <li>
-                          <a href="#" class="category">الجزء ب <span class="badge bg-light text-dark px-2 py-1">(3)</span></a>
-                        </li>
-                      </ul>
-                    </li>
 
-                    <li>
-                      <a href="#" class="category">المادة 2 <span class="badge bg-light text-dark px-2 py-1">(8)</span></a>
-                    </li>
-                  </ul>
-                </li>
+                  <?php if (!empty($hierarchy)): ?>
 
-                <!-- نظام آخر -->
-                <li>
-                  <a href="#" class="category">نظام الإقامات <span class="badge bg-light text-dark px-2 py-1">(14)</span></a>
-                  
-                  <ul class="list-unstyled ms-3">
-                    <li>
-                      <a href="#" class="category">المادة 1 <span class="badge bg-light text-dark px-2 py-1">(6)</span></a>
-                    </li>
-                    <li>
-                      <a href="#" class="category">المادة 2 <span class="badge bg-light text-dark px-2 py-1">(8)</span></a>
-                    </li>
-                  </ul>
-                </li>
+                      <?php foreach ($hierarchy as $system): ?>
+                          <li>
+                              <a class="category"><?php echo htmlspecialchars($system['title']); ?></a>
+
+                              <?php if (!empty($system['articles'])): ?>
+                                  <ul class="list-unstyled ms-3">
+
+                                      <?php foreach ($system['articles'] as $article): ?>
+                                          <li>
+                                              <a class="category"><?php echo htmlspecialchars($article['title']); ?></a>
+
+                                              <?php if (!empty($article['sections'])): ?>
+                                                  <ul class="list-unstyled ms-3">
+
+                                                      <?php foreach ($article['sections'] as $section): ?>
+                                                          <li>
+                                                              <a class="category"><?php echo htmlspecialchars($section['title']); ?></a>
+
+                                                              <?php if (!empty($section['subsections'])): ?>
+                                                                  <ul class="list-unstyled ms-3">
+
+                                                                      <?php foreach ($section['subsections'] as $sub): ?>
+                                                                          <li>
+                                                                              <a class="category"><?php echo htmlspecialchars($sub); ?></a>
+                                                                          </li>
+                                                                      <?php endforeach; ?>
+
+                                                                  </ul>
+                                                              <?php endif; ?>
+                                                          </li>
+                                                      <?php endforeach; ?>
+
+                                                  </ul>
+                                              <?php endif; ?>
+
+                                          </li>
+
+                                      <?php endforeach; ?>
+
+                                  </ul>
+                              <?php endif; ?>
+                          </li>
+                      <?php endforeach; ?>
+
+                  <?php else: ?>
+                      <p class="text-muted">لا توجد روابط قانونية مرتبطة بهذه المدونة.</p>
+                  <?php endif; ?>
 
               </ul>
-            </div><!--/Categories Widget -->
+          </div>
 
 
             <!-- Recent Posts Widget -->
@@ -296,6 +380,13 @@
           </div>
 
         </div>
+        <?php else: ?>
+
+        <div class="alert alert-danger mt-3">
+          عذراً، لم يتم العثور على هذه المدونة.
+        </div>
+
+        <?php endif; ?>
 
       </div>
     </div>
