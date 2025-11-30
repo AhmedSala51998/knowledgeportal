@@ -86,6 +86,13 @@ foreach ($system_ids as $sys_id) {
     }
 }
 
+
+// جلب آخر 5 مدونات ما عدا الحالية
+$recent_stmt = $conn->prepare("SELECT * FROM blogs WHERE id != ? ORDER BY created_at DESC LIMIT 5");
+$recent_stmt->bind_param("i", $blog_id);
+$recent_stmt->execute();
+$recent_posts = $recent_stmt->get_result();
+
 ?>
 <!DOCTYPE php>
 <php lang="en">
@@ -346,23 +353,27 @@ foreach ($system_ids as $sys_id) {
             <div class="recent-posts-widget widget-item">
               <h3 class="widget-title">أحدث المقالات</h3>
 
-              <div class="post-item">
-                <img src="assets/img/blog/blog-post-square-1.webp" alt="" class="flex-shrink-0">
-                <div style="margin-right: 10px;">
-                  <h4><a href="blog-details.php">تجديد الإقامة إلكترونيًا: دليل شامل</a></h4>
-                  <time datetime="2025-11-01">1 نوفمبر 2025</time>
-                </div>
-              </div><!-- End recent post item-->
+              <?php while ($post = $recent_posts->fetch_assoc()): ?>
+                <div class="post-item">
+                  <img src="dashboard<?php echo $post['image_url'] ?: 'assets/img/blog/default-square.jpg'; ?>" 
+                      alt="<?php echo htmlspecialchars($post['title']); ?>" 
+                      class="flex-shrink-0">
 
-              <div class="post-item">
-                <img src="assets/img/blog/blog-post-square-2.webp" alt="" class="flex-shrink-0">
-                <div style="margin-right: 10px;">
-                  <h4><a href="blog-details.php">كيفية الاستعلام عن العمالة عبر أبشر</a></h4>
-                  <time datetime="2025-10-25">25 أكتوبر 2025</time>
-                </div>
-              </div><!-- End recent post item-->
+                  <div style="margin-right: 10px;">
+                    <h4>
+                      <a href="blog-details.php?id=<?php echo $post['id']; ?>">
+                        <?php echo htmlspecialchars($post['title']); ?>
+                      </a>
+                    </h4>
 
-            </div><!--/Recent Posts Widget -->
+                    <time datetime="<?php echo date('Y-m-d', strtotime($post['created_at'])); ?>">
+                      <?php echo date("d F Y", strtotime($post['created_at'])); ?>
+                    </time>
+                  </div>
+                </div>
+              <?php endwhile; ?>
+
+            </div>
 
             <!-- Tags Widget -->
             <div class="tags-widget widget-item">
