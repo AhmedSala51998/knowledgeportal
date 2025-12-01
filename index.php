@@ -1219,7 +1219,7 @@ while ($row = $blogs_result->fetch_assoc()) {
         <div class="modal-content" dir="rtl">
             <div class="modal-header">
                 <h5 class="modal-title"><i class="bi bi-search"></i> البحث في المدونات</h5>
-                <button type="button" class="btn-close ms-0" data-bs-dismiss="modal"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" style="margin-left:auto;"></button>
             </div>
 
             <div class="modal-body">
