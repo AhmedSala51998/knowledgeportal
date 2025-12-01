@@ -7,7 +7,22 @@ $conn = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
 $conn->set_charset("utf8mb4");
 
 // جلب آخر 5 مدونات
-$blogs_query = "SELECT * FROM blogs ORDER BY created_at DESC LIMIT 5";
+//$blogs_query = "SELECT * FROM blogs ORDER BY created_at DESC";
+$search = isset($_GET['search']) ? trim($_GET['search']) : '';
+
+if ($search) {
+    // بحث
+    $stmt = $conn->prepare("SELECT * FROM blogs 
+                            WHERE title LIKE ? OR content LIKE ?
+                            ORDER BY created_at DESC");
+    $like = "%" . $search . "%";
+    $stmt->bind_param("ss", $like, $like);
+    $stmt->execute();
+    $blogs_result = $stmt->get_result();
+} else {
+    // بدون بحث
+    $blogs_result = $conn->query("SELECT * FROM blogs ORDER BY created_at DESC");
+}
 $blogs_result = $conn->query($blogs_query);
 
 // تحويل النتائج لمصفوفة
@@ -127,6 +142,16 @@ while ($row = $blogs_result->fetch_assoc()) {
         </div>
       </nav>
     </div><!-- End Page Title -->
+
+    <div class="container my-5" dir="rtl">
+        <form method="GET" action="blog.php" class="input-group">
+            <input type="text" name="search" class="form-control" placeholder="ابحث في المدونات..." 
+                  value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>" required>
+            <button class="btn btn-primary" type="submit">
+                <i class="bi bi-search"></i> بحث
+            </button>
+        </form>
+    </div>
 
     <!-- Recent Posts Section -->
  <!-- Recent Posts Section -->
