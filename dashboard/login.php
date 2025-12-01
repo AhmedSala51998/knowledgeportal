@@ -113,7 +113,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             <?php showMessage(); ?>
 
-            <form method="post" action="login.php">
+            <form method="post">
                 <div class="mb-3">
                     <label for="username" class="form-label">اسم المستخدم</label>
                     <div class="input-group">
