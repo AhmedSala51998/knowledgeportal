@@ -98,12 +98,7 @@ while ($row = $blogs_result->fetch_assoc()) {
       </nav>
 
       <a class="cta-btn" href="#about">ابدأ رحلتك معنا</a>
-      <div class="text-center my-3" dir="rtl">
-        <button class="btn" data-bs-toggle="modal" data-bs-target="#searchModal"
-                style="background: linear-gradient(45deg, #ff8800, #ff6a00); color:#fff; border:0;">
-            <i class="bi bi-search"></i> بحث
-        </button>
-      </div>
+      <a class="cta-btn" data-bs-toggle="modal" data-bs-target="#searchModal"><i class="bi bi-search"></i> بحث</a>
 
     </div>
   </header>
