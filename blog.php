@@ -147,7 +147,7 @@ while ($row = $blogs_result->fetch_assoc()) {
             <input type="text" name="search" class="form-control" placeholder="ابحث في المدونات..." 
                   value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>" required>
             <button class="btn" type="submit" 
-                    style="background: linear-gradient(45deg, #ff8800, #ff6a00); color:#fff; border:0;border-radius:0 5px 0 5px">
+                    style="background: linear-gradient(45deg, #ff8800, #ff6a00); color:#fff; border:0;border-radius:5px 0 5px 0">
                 <i class="bi bi-search"></i> بحث
             </button>
         </form>
