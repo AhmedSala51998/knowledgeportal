@@ -98,6 +98,12 @@ while ($row = $blogs_result->fetch_assoc()) {
       </nav>
 
       <a class="cta-btn" href="#about">ابدأ رحلتك معنا</a>
+      <div class="text-center my-3" dir="rtl">
+        <button class="btn" data-bs-toggle="modal" data-bs-target="#searchModal"
+                style="background: linear-gradient(45deg, #ff8800, #ff6a00); color:#fff; border:0;">
+            <i class="bi bi-search"></i> بحث
+        </button>
+      </div>
 
     </div>
   </header>
@@ -1211,6 +1217,42 @@ while ($row = $blogs_result->fetch_assoc()) {
 
 
   </main>
+
+  <!-- المودال -->
+<div class="modal fade" id="searchModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" dir="rtl">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="bi bi-search"></i> البحث في المدونات</h5>
+                <button type="button" class="btn-close ms-0" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+
+                <!-- نفس نموذج البحث بالضبط -->
+                <form method="GET" action="blog.php" class="input-group">
+                    <input style="border-radius:0 5px 5px 0" 
+                           type="text" 
+                           name="search" 
+                           class="form-control" 
+                           placeholder="ابحث في المدونات..." 
+                           value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>" 
+                           required>
+
+                    <button class="btn" type="submit"
+                        style="background: linear-gradient(45deg, #ff8800, #ff6a00); color:#fff; border:0; border-radius:5px 0 0 5px">
+                        <i class="bi bi-search"></i>
+                    </button>
+                </form>
+
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button>
+            </div>
+        </div>
+    </div>
+</div>
 
   <footer id="footer" class="footer dark-background" dir="rtl">
 
