@@ -117,7 +117,7 @@ while ($row = $blogs_result->fetch_assoc()) {
               الوصول للخدمات، فهم الأنظمة، والتعرّف على كل ما يخص الحياة والعمل داخل المملكة.
               </p>
               <a href="#recent-posts" class="btn-get-started">دعنا نبدأ</a>
-              <a href="#" data-bs-toggle="modal" data-bs-target="#searchModal" class="btn-get-started"><i class="bi bi-search"></i> بحث</a>
+              <a href="#" data-bs-toggle="modal" data-bs-target="#searchModal" class="btn-get-started">بحث <i class="bi bi-search"></i></a>
             </div>
           </div>
         </div>
