@@ -1217,9 +1217,9 @@ while ($row = $blogs_result->fetch_assoc()) {
 <div class="modal fade" id="searchModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content" dir="rtl">
-            <div class="modal-header">
+            <div class="modal-header" style="position:relative">
                 <h5 class="modal-title"><i class="bi bi-search"></i> البحث في المدونات</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" style="margin-left:auto;"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" style="position:absolute;left:0;"></button>
             </div>
 
             <div class="modal-body">
