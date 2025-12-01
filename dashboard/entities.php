@@ -235,6 +235,9 @@ $result = mysqli_query($conn, "SELECT * FROM concerned_entities ORDER BY created
                       <i class="fas fa-building"></i> الجهات المعنية
                 </a>
                 <a class="nav-link" href="usages.php"><i class="fas fa-cogs"></i> الاستخدامات</a>
+                <a class="nav-link" href="visitors.php">
+                      <i class="fas fa-users"></i> الزوار
+                </a>
                 <a class="nav-link" href="index.php?logout=true">
                     <i class="fas fa-sign-out-alt"></i> تسجيل الخروج
                 </a>

@@ -221,6 +221,9 @@ $result = mysqli_query($conn, "SELECT * FROM usages ORDER BY created_at DESC");
         <a class="nav-link text-white" href="users.php"><i class="fas fa-users"></i> المستخدمين والصلاحيات</a>
         <a class="nav-link text-white" href="entities.php"><i class="fas fa-building"></i> الجهات المعنية</a>
         <a class="nav-link active bg-primary text-white" href="usages.php"><i class="fas fa-cogs"></i> الاستخدامات</a>
+        <a class="nav-link" href="visitors.php">
+            <i class="fas fa-users"></i> الزوار
+        </a>
         <a class="nav-link text-white" href="index.php?logout=true"><i class="fas fa-sign-out-alt"></i> تسجيل الخروج</a>
       </nav>
     </div>

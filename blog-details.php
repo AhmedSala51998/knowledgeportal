@@ -1,5 +1,6 @@
 <?php
 require_once 'dashboard/config.php';
+require_once 'dashboard/track_visit.php';
 
 $conn = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
 $conn->set_charset("utf8mb4");
