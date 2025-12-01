@@ -98,12 +98,6 @@ while ($row = $blogs_result->fetch_assoc()) {
       </nav>
 
       <a class="cta-btn" href="#about">ابدأ رحلتك معنا</a>
-      <div class="text-center my-3" dir="rtl">
-        <button class="btn" data-bs-toggle="modal" data-bs-target="#searchModal"
-                style="background: linear-gradient(45deg, #ff8800, #ff6a00); color:#fff; border:0;border-radius:50px;margin-right:-30px">
-            <i class="bi bi-search"></i> بحث
-        </button>
-      </div>
 
     </div>
   </header>
@@ -123,6 +117,7 @@ while ($row = $blogs_result->fetch_assoc()) {
               الوصول للخدمات، فهم الأنظمة، والتعرّف على كل ما يخص الحياة والعمل داخل المملكة.
               </p>
               <a href="#recent-posts" class="btn-get-started">دعنا نبدأ</a>
+              <a href="#" data-bs-toggle="modal" data-bs-target="#searchModal" class="btn-get-started"><i class="bi bi-search"></i> بحث</a>
             </div>
           </div>
         </div>
