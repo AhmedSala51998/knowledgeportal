@@ -23,7 +23,6 @@ if ($search) {
     // بدون بحث
     $blogs_result = $conn->query("SELECT * FROM blogs ORDER BY created_at DESC");
 }
-$blogs_result = $conn->query($blogs_query);
 
 // تحويل النتائج لمصفوفة
 $blogs = [];
