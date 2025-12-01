@@ -147,7 +147,7 @@ $result = mysqli_query($conn, $sql);
                                         <td><?php echo $row['ip_address']; ?></td>
                                         <td><?php echo mb_substr($row['user_agent'], 0, 30) . "..."; ?></td>
                                         <td><?php echo $row['page_url']; ?></td>
-                                        <td><?php echo $row['visit_time']; ?></td>
+                                        <td><?php echo date('Y/m/d h:i A', strtotime($row['visit_time'])); ?></td>
                                     </tr>
                                 <?php endwhile; ?>
                             </tbody>
