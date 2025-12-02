@@ -1067,7 +1067,7 @@ while ($row = $blogs_result->fetch_assoc()) {
                                 </div>
 
                                 <h2 class="post-title">
-                                    <a href="blog-details.php?id=<?php echo $featured['id']; ?>">
+                                    <a href="blog-details.php?slug=<?php echo $featured['slug']; ?>">
                                         <?php echo htmlspecialchars($featured['title']); ?>
                                     </a>
                                 </h2>
@@ -1084,7 +1084,7 @@ while ($row = $blogs_result->fetch_assoc()) {
                                             <span class="read-time">5 دقائق قراءة</span>
                                         </div>
                                     </div>
-                                    <a href="blog-details.php?id=<?php echo $featured['id']; ?>" class="read-more">اقرأ المزيد</a>
+                                    <a href="blog-details.php?slug=<?php echo $featured['slug']; ?>" class="read-more">اقرأ المزيد</a>
                                 </div>
                             </div>
                         </article>
@@ -1118,7 +1118,7 @@ while ($row = $blogs_result->fetch_assoc()) {
                               <div class="recent-content">
                                   <span class="category">مدونة</span>
                                   <h3 class="recent-title">
-                                      <a href="blog-details.php?id=<?php echo $item['id']; ?>">
+                                      <a href="blog-details.php?slug=<?php echo $item['slug']; ?>">
                                           <?php echo htmlspecialchars($item['title']); ?>
                                       </a>
                                   </h3>

@@ -5,13 +5,13 @@ require_once 'dashboard/track_visit.php';
 $conn = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
 $conn->set_charset("utf8mb4");
 
-if (!isset($_GET['id'])) {
+if (!isset($_GET['slug'])) {
     die("خطأ: لم يتم إرسال رقم المدونة.");
 }
 
-$blog_id = intval($_GET['id']);
+$slug = intval($_GET['slug']);
 
-$sql = "SELECT * FROM blogs WHERE id = $blog_id";
+$sql = "SELECT * FROM blogs WHERE id = $slug";
 $result = $conn->query($sql);
 
 if ($result->num_rows == 0) {
@@ -295,8 +295,8 @@ $recent_posts = $recent_stmt->get_result();
 
                 <div class="meta-top">
                   <ul>
-                    <li class="d-flex align-items-center"><i style="margin-left:5px" class="bi bi-person"></i> <a href="blog-details.php?id=<?php $blog_id; ?>">بوابة المعرفة</a></li>
-                    <li class="d-flex align-items-center"><i style="margin-left:5px" class="bi bi-clock"></i> <a href="blog-details.php?id=<?php $blog_id; ?>><time datetime="<?php echo date('Y-m-d', strtotime($blog['created_at'])); ?>"> <?php echo getArabicDate($blog['created_at']); ?></time></a></li>
+                    <li class="d-flex align-items-center"><i style="margin-left:5px" class="bi bi-person"></i> <a href="blog-details.php?slug=<?php $slug; ?>">بوابة المعرفة</a></li>
+                    <li class="d-flex align-items-center"><i style="margin-left:5px" class="bi bi-clock"></i> <a href="blog-details.php?slug=<?php $slug; ?>><time datetime="<?php echo date('Y-m-d', strtotime($blog['created_at'])); ?>"> <?php echo getArabicDate($blog['created_at']); ?></time></a></li>
                   </ul>
                 </div><!-- End meta top -->
 

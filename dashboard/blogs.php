@@ -5,6 +5,32 @@ require_once 'config.php';
 // التحقق من تسجيل دخول المستخدم
 requireLogin();
 
+function generateSlug($title) {
+    // تحويل العنوان إلى slug أساسي
+    $slug = preg_replace('/[^a-z0-9]+/i', '-', strtolower($title));
+    $slug = trim($slug, '-');
+
+    // إضافة جزء عشوائي لضمان uniqueness
+    $random = substr(bin2hex(random_bytes(6)), 0, 12);
+
+    return $slug . '-' . $random;
+}
+
+// التحقق من عدم تكرار الـ slug في قاعدة البيانات
+function makeUniqueSlug($conn, $slug) {
+    $original = $slug;
+    $i = 1;
+
+    while (true) {
+        $check = $conn->query("SELECT id FROM blogs WHERE slug = '$slug'");
+        if ($check->num_rows == 0) break;
+        $slug = $original . '-' . $i;
+        $i++;
+    }
+
+    return $slug;
+}
+
 // دالة للحصول على نظام بواسطة المعرف
 function getReferenceSystemById($id) {
     global $conn;
@@ -118,11 +144,26 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }
         }
 
-        $sql = "INSERT INTO blogs (title, content, pdf_path, video_url, image_url, external_link, reference_system_id, reference_article_id, reference_section_id , reference_subsection_id) 
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ? , ?)";
-        $stmt = mysqli_prepare($conn, $sql);
-        mysqli_stmt_bind_param($stmt, "ssssssssss", $title, $content, $pdf_path, $video_url, $image_url, $external_link, $reference_system_id, $reference_article_id, $reference_section_id , $reference_subsection_id);
+        $slug = generateSlug($title);
+        $slug = makeUniqueSlug($conn, $slug);
 
+        $sql = "INSERT INTO blogs (title, slug, content, pdf_path, video_url, image_url, external_link, reference_system_id, reference_article_id, reference_section_id , reference_subsection_id) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        $stmt = mysqli_prepare($conn, $sql);
+        mysqli_stmt_bind_param($stmt, "sssssssssss",
+            $title,
+            $slug,
+            $content,
+            $pdf_path,
+            $video_url,
+            $image_url,
+            $external_link,
+            $reference_system_id,
+            $reference_article_id,
+            $reference_section_id,
+            $reference_subsection_id
+        );
+        
         if (mysqli_stmt_execute($stmt)) {
             $_SESSION['message'] = "تم إضافة المدونة بنجاح!";
             $_SESSION['message_type'] = "success";
