@@ -240,7 +240,7 @@ $recent_posts = $recent_stmt->get_result();
 
                       <dotlottie-wc
                           src="https://lottie.host/4ca8fb55-0007-4af3-b062-c0c7bd96b2e7/wtRDuQLkqL.lottie"
-                          style="height:300px;width:300px"
+                          style="height:400px;width:auto"
                           autoplay
                           loop>
                       </dotlottie-wc>
