@@ -268,6 +268,7 @@ while ($row = $blogs_result->fetch_assoc()) {
 
   <!-- Contact Section -->
 
+    <?php if (!empty($blogs)): ?>
     <!-- Blog Pagination Section -->
     <section id="blog-pagination" class="blog-pagination section">
 
@@ -287,6 +288,7 @@ while ($row = $blogs_result->fetch_assoc()) {
       </div>
 
     </section><!-- /Blog Pagination Section -->
+    <?php endif; ?>
 
   </main>
 
