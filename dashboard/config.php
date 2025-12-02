@@ -35,6 +35,21 @@ function isEditor() {
     return isset($_SESSION['role']) && ($_SESSION['role'] === 'admin' || $_SESSION['role'] === 'editor');
 }
 
+function getArabicDate($dateString) {
+    // Formatter عربي لمصر
+    $formatter = new IntlDateFormatter(
+        'ar_EG',
+        IntlDateFormatter::NONE,
+        IntlDateFormatter::NONE,
+        'Africa/Cairo',
+        IntlDateFormatter::GREGORIAN,
+        'd MMMM yyyy' // نفس تنسيق d F Y لكن بالعربي
+    );
+
+    $timestamp = strtotime($dateString);
+    return $formatter->format($timestamp);
+}
+
 // دالة لحماية الصفحات
 function requireLogin() {
     if (!isLoggedIn()) {

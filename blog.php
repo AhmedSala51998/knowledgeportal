@@ -198,15 +198,28 @@ while ($row = $blogs_result->fetch_assoc()) {
                       <?php $featured = $blogs[0]; ?>
                       <article class="featured-post">
                           <div class="featured-img">
-                              <img src="dashboard/<?php echo $featured['image_url'] ?: 'assets/img/blog/default.jpg'; ?>" 
-                                  alt="" class="img-fluid" loading="lazy">
+                              <?php if (!empty($featured['image_url'])): ?>
+
+                                  <img src="dashboard/<?php echo $featured['image_url']; ?>" 
+                                      alt="" class="img-fluid" loading="lazy">
+
+                              <?php else: ?>
+
+                                  <dotlottie-wc
+                                      src="https://lottie.host/4ca8fb55-0007-4af3-b062-c0c7bd96b2e7/wtRDuQLkqL.lottie"
+                                      style="width: 300px; height: 300px; display:block; margin:auto"
+                                      autoplay
+                                      loop>
+                                  </dotlottie-wc>
+
+                              <?php endif; ?>
                               <div class="featured-badge">مميز</div>
                           </div>
 
                           <div class="featured-content">
                               <div class="post-header">
                                   <span class="category">مدونة</span>
-                                  <span class="post-date"><?php echo date("d F Y", strtotime($featured['created_at'])); ?></span>
+                                  <span class="post-date"><?php echo getArabicDate($featured['created_at']); ?></span>
                               </div>
 
                               <h2 class="post-title">
@@ -242,8 +255,21 @@ while ($row = $blogs_result->fetch_assoc()) {
 
                         <article class="recent-post" data-aos="fade-up" data-aos-delay="<?php echo 100 + ($i * 80); ?>">
                             <div class="recent-img">
-                                <img src="dashboard/<?php echo $item['image_url'] ?: 'assets/img/blog/default.jpg'; ?>" 
-                                    alt="" class="img-fluid" loading="lazy">
+                              <?php if (!empty($item['image_url'])): ?>
+
+                                  <img src="dashboard/<?php echo $item['image_url']; ?>" 
+                                      alt="" class="img-fluid" loading="lazy">
+
+                              <?php else: ?>
+
+                                  <dotlottie-wc
+                                      src="https://lottie.host/4ca8fb55-0007-4af3-b062-c0c7bd96b2e7/wtRDuQLkqL.lottie"
+                                      style="width: 300px; height: 300px; display:block; margin:auto"
+                                      autoplay
+                                      loop>
+                                  </dotlottie-wc>
+
+                              <?php endif; ?>
                             </div>
                             <div class="recent-content">
                                 <span class="category">مدونة</span>
@@ -254,7 +280,7 @@ while ($row = $blogs_result->fetch_assoc()) {
                                 </h3>
                                 <div class="recent-meta">
                                     <span class="author">بوابة المعرفة</span>
-                                    <span class="date"><?php echo date("d F Y", strtotime($item['created_at'])); ?></span>
+                                    <span class="date"><?php echo getArabicDate($item['created_at']); ?></span>
                                 </div>
                             </div>
                         </article>

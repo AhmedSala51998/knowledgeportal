@@ -231,7 +231,21 @@ $recent_posts = $recent_stmt->get_result();
               <article class="article">
 
                 <div class="post-img">
-                  <img src="dashboard/<?php echo $blog['image_url'] ?: 'assets/img/blog/default.jpg'; ?>" alt="<?php echo htmlspecialchars($blog['title']); ?>" class="img-fluid">
+                  <?php if (!empty($blog['image_url'])): ?>
+
+                      <img src="dashboard/<?php echo $blog['image_url']; ?>" 
+                          alt="<?php echo htmlspecialchars($blog['title']); ?>" class="img-fluid" loading="lazy">
+
+                  <?php else: ?>
+
+                      <dotlottie-wc
+                          src="https://lottie.host/4ca8fb55-0007-4af3-b062-c0c7bd96b2e7/wtRDuQLkqL.lottie"
+                          style="width: 300px; height: 300px; display:block; margin:auto"
+                          autoplay
+                          loop>
+                      </dotlottie-wc>
+
+                  <?php endif; ?>
                 </div>
 
                 <h2 class="title"><?php echo htmlspecialchars($blog['title']); ?></h2>
@@ -239,12 +253,12 @@ $recent_posts = $recent_stmt->get_result();
                 <div class="meta-top">
                   <ul>
                     <li class="d-flex align-items-center"><i style="margin-left:5px" class="bi bi-person"></i> <a href="blog-details.php?id=<?php $blog_id; ?>">بوابة المعرفة</a></li>
-                    <li class="d-flex align-items-center"><i style="margin-left:5px" class="bi bi-clock"></i> <a href="blog-details.php?id=<?php $blog_id; ?>><time datetime="<?php echo date('Y-m-d', strtotime($blog['created_at'])); ?>"> <?php echo date("d F Y", strtotime($blog['created_at'])); ?></time></a></li>
+                    <li class="d-flex align-items-center"><i style="margin-left:5px" class="bi bi-clock"></i> <a href="blog-details.php?id=<?php $blog_id; ?>><time datetime="<?php echo date('Y-m-d', strtotime($blog['created_at'])); ?>"> <?php echo getArabicDate($blog['created_at']); ?></time></a></li>
                   </ul>
                 </div><!-- End meta top -->
 
                 <div class="content">
-                  <?php echo nl2br($blog['content']); ?>
+                  <?php echo nl2br(strip_tags($blog['content'])); ?>
 
                   <blockquote>
                     <p>
@@ -257,16 +271,16 @@ $recent_posts = $recent_stmt->get_result();
                 <div class="meta-bottom">
                   <i class="bi bi-folder"></i>
                   <ul class="cats">
-                    <li><a href="blogs.php">خدمات المقيمين والمواطنين</a></li>
+                    <li><a href="blog.php?search=خدمات المقيمين والمواطنين">خدمات المقيمين والمواطنين</a></li>
                   </ul>
 
                   <i class="bi bi-tags"></i>
                   <ul class="tags">
-                    <li><a href="blogs.php">الإقامة</a></li>
-                    <li><a href="blogs.php">العمالة</a></li>
-                    <li><a href="blogs.php">القوانين</a></li>
-                    <li><a href="blogs.php">أبشر</a></li>
-                    <li><a href="blogs.php">النظام السعودي</a></li>
+                    <li><a href="blog.php?search=الإقامة">الإقامة</a></li>
+                    <li><a href="blog.php?search=العمالة">العمالة</a></li>
+                    <li><a href="blog.php?search=القوانين">القوانين</a></li>
+                    <li><a href="blog.php?search=أبشر">أبشر</a></li>
+                    <li><a href="blog.php?search=النظام السعودي">النظام السعودي</a></li>
                   </ul>
                 </div><!-- End meta bottom -->
 
@@ -367,9 +381,23 @@ $recent_posts = $recent_stmt->get_result();
 
               <?php while ($post = $recent_posts->fetch_assoc()): ?>
                 <div class="post-item">
-                  <img src="dashboard/<?php echo $post['image_url'] ?: 'assets/img/blog/default-square.jpg'; ?>" 
-                      alt="<?php echo htmlspecialchars($post['title']); ?>" 
-                      class="flex-shrink-0">
+
+                      <?php if (!empty($blog['image_url'])): ?>
+
+                          <img src="dashboard/<?php echo $post['image_url'] ?: 'assets/img/blog/default-square.jpg'; ?>" 
+                            alt="<?php echo htmlspecialchars($post['title']); ?>" 
+                            class="flex-shrink-0">
+
+                      <?php else: ?>
+
+                          <dotlottie-wc
+                              src="https://lottie.host/4ca8fb55-0007-4af3-b062-c0c7bd96b2e7/wtRDuQLkqL.lottie"
+                              style="width: 300px; height: 300px; display:block; margin:auto"
+                              autoplay
+                              loop>
+                          </dotlottie-wc>
+
+                      <?php endif; ?>
 
                   <div style="margin-right: 10px;">
                     <h4>
@@ -379,7 +407,7 @@ $recent_posts = $recent_stmt->get_result();
                     </h4>
 
                     <time datetime="<?php echo date('Y-m-d', strtotime($post['created_at'])); ?>">
-                      <?php echo date("d F Y", strtotime($post['created_at'])); ?>
+                      <?php echo getArabicDate($blog['created_at']); ?>
                     </time>
                   </div>
                 </div>
