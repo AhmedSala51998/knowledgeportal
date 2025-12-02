@@ -165,6 +165,26 @@ while ($row = $blogs_result->fetch_assoc()) {
           <div class="row">
 
               <div class="col-lg-8" data-aos="fade-up" data-aos-delay="100">
+                <?php if (empty($blogs)): ?>
+
+                  <div class="text-center my-5" dir="rtl">
+                      <dotlottie-wc 
+                          src="https://lottie.host/6d7d98df-8530-40e5-a812-a9fcf1bb6178/M2mgko81So.lottie" 
+                          style="width: 300px; height: 300px" 
+                          autoplay loop>
+                      </dotlottie-wc>
+
+                      <h3 class="mt-3" style="font-weight:600;">
+                          <?php if ($search): ?>
+                              لا توجد نتائج مطابقة لبحثك:  
+                              <span style="color:#ff8800;"><?php echo htmlspecialchars($search); ?></span>
+                          <?php else: ?>
+                              لا توجد مدونات حالياً.
+                          <?php endif; ?>
+                      </h3>
+                  </div>
+
+                  <?php endif; ?>
                   <?php if (!empty($blogs)): ?>
                       <?php $featured = $blogs[0]; ?>
                       <article class="featured-post">
