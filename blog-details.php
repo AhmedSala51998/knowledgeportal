@@ -15,8 +15,10 @@ if (!isset($_GET['slug'])) {
 
 $slug = $_GET['slug'];
 
-$sql = "SELECT * FROM blogs WHERE slug = '$slug'";
-$result = $conn->query($sql);
+$stmt = $conn->prepare("SELECT * FROM blogs WHERE slug = ?");
+$stmt->bind_param("s", $slug);
+$stmt->execute();
+$result = $stmt->get_result();
 
 if ($result->num_rows == 0) {
     die("لم يتم العثور على هذه المدونة.");
