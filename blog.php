@@ -6,23 +6,49 @@ require_once 'dashboard/track_visit.php';
 $conn = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
 $conn->set_charset("utf8mb4");
 
+$per_page = 3;
+$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+$start = ($page - 1) * $per_page;
+
 // جلب آخر 5 مدونات
 //$blogs_query = "SELECT * FROM blogs ORDER BY created_at DESC";
 $search = isset($_GET['search']) ? trim($_GET['search']) : '';
 
 if ($search) {
-    // بحث
+
+    // إجمالي النتائج
+    $stmt_count = $conn->prepare("SELECT COUNT(*) FROM blogs 
+                                  WHERE title LIKE ? OR content LIKE ?");
+    $like = "%".$search."%";
+    $stmt_count->bind_param("ss", $like, $like);
+    $stmt_count->execute();
+    $stmt_count->bind_result($total_blogs);
+    $stmt_count->fetch();
+    $stmt_count->close();
+
+    // جلب البيانات
     $stmt = $conn->prepare("SELECT * FROM blogs 
                             WHERE title LIKE ? OR content LIKE ?
-                            ORDER BY created_at DESC");
-    $like = "%" . $search . "%";
-    $stmt->bind_param("ss", $like, $like);
+                            ORDER BY created_at DESC
+                            LIMIT ?, ?");
+    $stmt->bind_param("ssii", $like, $like, $start, $per_page);
     $stmt->execute();
     $blogs_result = $stmt->get_result();
+
 } else {
-    // بدون بحث
-    $blogs_result = $conn->query("SELECT * FROM blogs ORDER BY created_at DESC");
+
+    // إجمالي المدونات
+    $count = $conn->query("SELECT COUNT(*) AS c FROM blogs")->fetch_assoc();
+    $total_blogs = $count['c'];
+
+    // جلب البيانات
+    $stmt = $conn->prepare("SELECT * FROM blogs ORDER BY created_at DESC LIMIT ?, ?");
+    $stmt->bind_param("ii", $start, $per_page);
+    $stmt->execute();
+    $blogs_result = $stmt->get_result();
 }
+
+$total_pages = ceil($total_blogs / $per_page);
 
 // تحويل النتائج لمصفوفة
 $blogs = [];
@@ -295,27 +321,49 @@ while ($row = $blogs_result->fetch_assoc()) {
 
   <!-- Contact Section -->
 
-    <?php if (!empty($blogs)): ?>
-    <!-- Blog Pagination Section -->
-    <section id="blog-pagination" class="blog-pagination section">
+    <?php if ($total_pages > 1): ?>
+      <section id="blog-pagination" class="blog-pagination section">
+          <div class="container">
+              <div class="d-flex justify-content-center">
+                  <ul>
 
-      <div class="container">
-        <div class="d-flex justify-content-center">
-          <ul>
-            <li><a href="#"><i class="bi bi-chevron-left"></i></a></li>
-            <li><a href="#">1</a></li>
-            <li><a href="#" class="active">2</a></li>
-            <li><a href="#">3</a></li>
-            <li><a href="#">4</a></li>
-            <li>...</li>
-            <li><a href="#">10</a></li>
-            <li><a href="#"><i class="bi bi-chevron-right"></i></a></li>
-          </ul>
-        </div>
-      </div>
+                      <!-- Previous -->
+                      <li>
+                          <?php if ($page > 1): ?>
+                              <a href="?page=<?= $page - 1 ?>&search=<?= urlencode($search) ?>">
+                                  <i class="bi bi-chevron-left"></i>
+                              </a>
+                          <?php else: ?>
+                              <span class="disabled"><i class="bi bi-chevron-left"></i></span>
+                          <?php endif; ?>
+                      </li>
 
-    </section><!-- /Blog Pagination Section -->
-    <?php endif; ?>
+                      <!-- Page Numbers -->
+                      <?php for ($i = 1; $i <= $total_pages; $i++): ?>
+                          <li>
+                              <a href="?page=<?= $i ?>&search=<?= urlencode($search) ?>" 
+                                class="<?= ($i == $page) ? 'active' : '' ?>">
+                                  <?= $i ?>
+                              </a>
+                          </li>
+                      <?php endfor; ?>
+
+                      <!-- Next -->
+                      <li>
+                          <?php if ($page < $total_pages): ?>
+                              <a href="?page=<?= $page + 1 ?>&search=<?= urlencode($search) ?>">
+                                  <i class="bi bi-chevron-right"></i>
+                              </a>
+                          <?php else: ?>
+                              <span class="disabled"><i class="bi bi-chevron-right"></i></span>
+                          <?php endif; ?>
+                      </li>
+
+                  </ul>
+              </div>
+          </div>
+      </section>
+      <?php endif; ?>
 
   </main>
 
