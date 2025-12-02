@@ -4790,6 +4790,7 @@ section,
 .recent-posts-widget .post-item img,
 .recent-posts-widget .post-item dotlottie-wc {
   width: 80px;
+  height: 80px;
   margin-right: 15px;
   object-fit: cover; /* بس الـLottie هياخد الحجم بدون تشويه */
 }
