@@ -97,7 +97,7 @@ while ($row = $blogs_result->fetch_assoc()) {
         <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
       </nav>
 
-      <a class="cta-btn" href="#about">ابدأ رحلتك معنا</a>
+      <a class="cta-btn" href="#recent-posts">ابدأ رحلتك معنا</a>
 
     </div>
   </header>
