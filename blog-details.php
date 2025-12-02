@@ -14,6 +14,7 @@ if (!isset($_GET['slug'])) {
 }
 
 $slug = $_GET['slug'];
+echo $slug;
 
 $stmt = $conn->prepare("SELECT * FROM blogs WHERE slug = ?");
 $stmt->bind_param("s", $slug);
