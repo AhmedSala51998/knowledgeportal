@@ -11,7 +11,7 @@ if (!isset($_GET['slug'])) {
 
 $slug = intval($_GET['slug']);
 
-$sql = "SELECT * FROM blogs WHERE id = $slug";
+$sql = "SELECT * FROM blogs WHERE slug = $slug";
 $result = $conn->query($sql);
 
 if ($result->num_rows == 0) {
