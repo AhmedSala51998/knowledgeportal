@@ -2,6 +2,10 @@
 require_once 'dashboard/config.php';
 require_once 'dashboard/track_visit.php';
 
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 $conn = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
 $conn->set_charset("utf8mb4");
 
