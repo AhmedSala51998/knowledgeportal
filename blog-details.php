@@ -124,49 +124,50 @@ $recent_posts = $recent_stmt->get_result();
   <link href="assets/vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://unpkg.com/@lottiefiles/dotlottie-wc@0.8.5/dist/dotlottie-wc.js" type="module"></script>
-  <style>
-    .tree {
-    list-style: none;
-    padding-right: 0;
-}
-
-.tree li {
-    margin-bottom: 8px;
-    position: relative;
-}
-
-.tree li a {
-    display: block;
-    padding: 8px 12px;
-    background: #f6f6f6;
-    border-radius: 8px;
-    font-weight: 600;
-    color: #444;
-    text-decoration: none;
-    transition: 0.2s;
-}
-
-.tree li a:hover {
-    background: #ffb85c;
-    color: #fff;
-}
-
-.tree ul {
-    margin-right: 18px;
-    border-right: 2px dashed #ccc;
-    padding-right: 12px;
-    margin-top: 8px;
-}
-
-.tree li::before {
-    content: "•";
-    font-size: 20px;
-    color: #ff8800;
-    margin-left: 6px;
-}
-  </style>
   <!-- Main CSS File -->
   <link href="assets/css/main.css" rel="stylesheet">
+
+    <style>
+    .tree {
+        list-style: none;
+        padding-right: 0;
+    }
+
+    .tree li {
+        margin-bottom: 8px;
+        position: relative;
+    }
+
+    .tree li a {
+        display: block;
+        padding: 8px 12px;
+        background: #f6f6f6;
+        border-radius: 8px;
+        font-weight: 600;
+        color: #444;
+        text-decoration: none;
+        transition: 0.2s;
+    }
+
+    .tree li a:hover {
+        background: #ffb85c;
+        color: #fff;
+    }
+
+    .tree ul {
+        margin-right: 18px;
+        border-right: 2px dashed #ccc;
+        padding-right: 12px;
+        margin-top: 8px;
+    }
+
+    .tree li::before {
+        content: "•";
+        font-size: 20px;
+        color: #ff8800;
+        margin-left: 6px;
+    }
+  </style>
 
   <!-- =======================================================
   * Template Name: Knowledge Portal
