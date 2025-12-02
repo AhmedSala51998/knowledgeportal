@@ -227,7 +227,7 @@ while ($row = $blogs_result->fetch_assoc()) {
                 <li><i class="bi bi-check-circle"></i> نصائح عملية للحياة والعمل والمعيشة داخل المملكة للمقيمين والمواطنين.</li>
               </ul>
 
-              <a href="#" class="btn btn-primary btn-lg mt-4" data-aos="fade-up" data-aos-delay="300">اكتشف المزيد</a>
+              <a href="#services" class="btn btn-primary btn-lg mt-4" data-aos="fade-up" data-aos-delay="300">اكتشف المزيد</a>
             </div>
           </div>
         </div>
