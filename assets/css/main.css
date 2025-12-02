@@ -3136,7 +3136,7 @@ section,
 .contact .contact-form-container h3:before {
   content: "";
   position: absolute;
-  right: 0;
+  left: 0;
   top: 0;
   height: 100%;
   width: 4px;
