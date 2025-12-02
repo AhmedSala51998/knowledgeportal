@@ -18,3 +18,6 @@ RewriteCond %{REQUEST_FILENAME} !-d
 
 # روابط بدون .php تتحول لملفات .php
 RewriteRule ^([a-zA-Z0-9_-]+)$ $1.php [L,QSA]
+
+# تحويل blog-details/slug → blog-details.php?slug=slug
+RewriteRule ^blog-details/([a-zA-Z0-9-_]+)$ blog-details.php?slug=$1 [L,QSA]
