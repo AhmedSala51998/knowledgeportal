@@ -424,7 +424,7 @@ $recent_posts = $recent_stmt->get_result();
 
             <!-- Recent Posts Widget -->
             <div class="recent-posts-widget widget-item">
-              <h3 class="widget-title">أحدث المقالات</h3>
+              <h3 class="widget-title">أحدث المدونات</h3>
 
               <?php while ($post = $recent_posts->fetch_assoc()): ?>
                 <div class="post-item">
