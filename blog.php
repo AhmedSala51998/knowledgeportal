@@ -401,11 +401,11 @@ while ($row = $blogs_result->fetch_assoc()) {
           <div class="footer-links">
             <h4>عن البوابة</h4>
             <ul>
-              <li><a href="#"><i class="bi bi-chevron-left"></i> من نحن</a></li>
-              <li><a href="#"><i class="bi bi-chevron-left"></i> الوظائف</a></li>
-              <li><a href="#"><i class="bi bi-chevron-left"></i> الصحافة</a></li>
-              <li><a href="#"><i class="bi bi-chevron-left"></i> المدونة</a></li>
-              <li><a href="#"><i class="bi bi-chevron-left"></i> تواصل معنا</a></li>
+              <li><a href="index.php#about"><i class="bi bi-chevron-left"></i> من نحن</a></li>
+              <li><a href="blog.php?search=الوظائف"><i class="bi bi-chevron-left"></i> الوظائف</a></li>
+              <li><a href="blog.php?search=الصحافة"><i class="bi bi-chevron-left"></i> الصحافة</a></li>
+              <li><a href="blog.php?search=المدونة"><i class="bi bi-chevron-left"></i> المدونة</a></li>
+              <li><a href="index.php#contact"><i class="bi bi-chevron-left"></i> تواصل معنا</a></li>
             </ul>
           </div>
         </div>
@@ -414,11 +414,11 @@ while ($row = $blogs_result->fetch_assoc()) {
           <div class="footer-links">
             <h4>الخدمات</h4>
             <ul>
-              <li><a href="#"><i class="bi bi-chevron-left"></i> متابعة الإقامات</a></li>
-              <li><a href="#"><i class="bi bi-chevron-left"></i> بلاغات الهروب</a></li>
-              <li><a href="#"><i class="bi bi-chevron-left"></i> الاستعلام عن العمالة</a></li>
-              <li><a href="#"><i class="bi bi-chevron-left"></i> الدعم القانوني للعمل</a></li>
-              <li><a href="#"><i class="bi bi-chevron-left"></i> الاستفسارات العامة</a></li>
+              <li><a href="blog.php?search=متابعة الإقامات"><i class="bi bi-chevron-left"></i> متابعة الإقامات</a></li>
+              <li><a href="blog.php?search=بلاغات الهروب"><i class="bi bi-chevron-left"></i> بلاغات الهروب</a></li>
+              <li><a href="blog.php?search=الاستعلام عن العمالة"><i class="bi bi-chevron-left"></i> الاستعلام عن العمالة</a></li>
+              <li><a href="blog.php?search=الدعم القانوني للعمل"><i class="bi bi-chevron-left"></i> الدعم القانوني للعمل</a></li>
+              <li><a href="blog.php?search=الاستفسارات العامة"><i class="bi bi-chevron-left"></i> الاستفسارات العامة</a></li>
             </ul>
           </div>
         </div>
