@@ -1067,7 +1067,7 @@ while ($row = $blogs_result->fetch_assoc()) {
                                 </div>
 
                                 <h2 class="post-title">
-                                    <a href="blog-details.php?slug=<?php echo $featured['slug']; ?>">
+                                    <a href="blog-details.php?id=<?php echo $featured['id']; ?>">
                                         <?php echo htmlspecialchars($featured['title']); ?>
                                     </a>
                                 </h2>
