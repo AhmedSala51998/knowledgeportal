@@ -13,8 +13,7 @@ if (!isset($_GET['slug'])) {
     die("خطأ: لم يتم إرسال رقم المدونة.");
 }
 
-$slug = $_GET['slug'];
-echo $slug;
+$slug = urldecode($_GET['slug']);
 
 $stmt = $conn->prepare("SELECT * FROM blogs WHERE slug = ?");
 $stmt->bind_param("s", $slug);
