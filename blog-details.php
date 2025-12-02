@@ -49,6 +49,7 @@ $section_ids = !empty($blog['reference_section_id']) ? explode(',', $blog['refer
 $subsection_ids = !empty($blog['reference_subsection_id']) ? explode(',', $blog['reference_subsection_id']) : [];
 
 foreach ($system_ids as $sys_id) {
+
     $sys = getReferenceSystemById($sys_id);
     if (!$sys) continue;
 
@@ -88,6 +89,7 @@ foreach ($system_ids as $sys_id) {
 }
 
 
+
 // جلب آخر 5 مدونات ما عدا الحالية
 $recent_stmt = $conn->prepare("SELECT * FROM blogs WHERE id != ? ORDER BY created_at DESC LIMIT 5");
 $recent_stmt->bind_param("i", $blog_id);
@@ -122,7 +124,47 @@ $recent_posts = $recent_stmt->get_result();
   <link href="assets/vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://unpkg.com/@lottiefiles/dotlottie-wc@0.8.5/dist/dotlottie-wc.js" type="module"></script>
+  <style>
+    .tree {
+    list-style: none;
+    padding-right: 0;
+}
 
+.tree li {
+    margin-bottom: 8px;
+    position: relative;
+}
+
+.tree li a {
+    display: block;
+    padding: 8px 12px;
+    background: #f6f6f6;
+    border-radius: 8px;
+    font-weight: 600;
+    color: #444;
+    text-decoration: none;
+    transition: 0.2s;
+}
+
+.tree li a:hover {
+    background: #ffb85c;
+    color: #fff;
+}
+
+.tree ul {
+    margin-right: 18px;
+    border-right: 2px dashed #ccc;
+    padding-right: 12px;
+    margin-top: 8px;
+}
+
+.tree li::before {
+    content: "•";
+    font-size: 20px;
+    color: #ff8800;
+    margin-left: 6px;
+}
+  </style>
   <!-- Main CSS File -->
   <link href="assets/css/main.css" rel="stylesheet">
 
@@ -322,62 +364,61 @@ $recent_posts = $recent_stmt->get_result();
             </div><!--/Blog Author Widget -->
 
             <div class="tags-widget widget-item">
-              <h3 class="widget-title">الاستدلال من الأنظمة والقوانين</h3>
+                <h3 class="widget-title">الاستدلال من الأنظمة والقوانين</h3>
 
-              <ul class="list-unstyled mt-3">
+                <?php if (!empty($hierarchy)): ?>
+                    <ul class="tree mt-3">
 
-                  <?php if (!empty($hierarchy)): ?>
+                        <?php foreach ($hierarchy as $system): ?>
+                            <li>
+                                <a><?php echo htmlspecialchars($system['title']); ?></a>
 
-                      <?php foreach ($hierarchy as $system): ?>
-                          <li>
-                              <a class="category"><?php echo htmlspecialchars($system['title']); ?></a>
+                                <?php if (!empty($system['articles'])): ?>
+                                    <ul>
 
-                              <?php if (!empty($system['articles'])): ?>
-                                  <ul class="list-unstyled ms-3">
+                                        <?php foreach ($system['articles'] as $article): ?>
+                                            <li>
+                                                <a><?php echo htmlspecialchars($article['title']); ?></a>
 
-                                      <?php foreach ($system['articles'] as $article): ?>
-                                          <li>
-                                              <a class="category"><?php echo htmlspecialchars($article['title']); ?></a>
+                                                <?php if (!empty($article['sections'])): ?>
+                                                    <ul>
 
-                                              <?php if (!empty($article['sections'])): ?>
-                                                  <ul class="list-unstyled ms-3">
+                                                        <?php foreach ($article['sections'] as $section): ?>
+                                                            <li>
+                                                                <a><?php echo htmlspecialchars($section['title']); ?></a>
 
-                                                      <?php foreach ($article['sections'] as $section): ?>
-                                                          <li>
-                                                              <a class="category"><?php echo htmlspecialchars($section['title']); ?></a>
+                                                                <?php if (!empty($section['subsections'])): ?>
+                                                                    <ul>
+                                                                        <?php foreach ($section['subsections'] as $sub): ?>
+                                                                            <li>
+                                                                                <a><?php echo htmlspecialchars($sub); ?></a>
+                                                                            </li>
+                                                                        <?php endforeach; ?>
+                                                                    </ul>
+                                                                <?php endif; ?>
 
-                                                              <?php if (!empty($section['subsections'])): ?>
-                                                                  <ul class="list-unstyled ms-3">
+                                                            </li>
+                                                        <?php endforeach; ?>
 
-                                                                      <?php foreach ($section['subsections'] as $sub): ?>
-                                                                          <li>
-                                                                              <a class="category"><?php echo htmlspecialchars($sub); ?></a>
-                                                                          </li>
-                                                                      <?php endforeach; ?>
+                                                    </ul>
+                                                <?php endif; ?>
 
-                                                                  </ul>
-                                                              <?php endif; ?>
-                                                          </li>
-                                                      <?php endforeach; ?>
+                                            </li>
+                                        <?php endforeach; ?>
 
-                                                  </ul>
-                                              <?php endif; ?>
+                                    </ul>
+                                <?php endif; ?>
 
-                                          </li>
+                            </li>
+                        <?php endforeach; ?>
 
-                                      <?php endforeach; ?>
+                    </ul>
 
-                                  </ul>
-                              <?php endif; ?>
-                          </li>
-                      <?php endforeach; ?>
+                <?php else: ?>
+                    <p class="text-muted">لا توجد روابط قانونية مرتبطة بهذه المدونة.</p>
+                <?php endif; ?>
 
-                  <?php else: ?>
-                      <p class="text-muted">لا توجد روابط قانونية مرتبطة بهذه المدونة.</p>
-                  <?php endif; ?>
-
-              </ul>
-          </div>
+            </div>
 
 
             <!-- Recent Posts Widget -->
