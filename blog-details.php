@@ -240,7 +240,6 @@ $recent_posts = $recent_stmt->get_result();
 
                       <dotlottie-wc
                           src="https://lottie.host/4ca8fb55-0007-4af3-b062-c0c7bd96b2e7/wtRDuQLkqL.lottie"
-                          style="width: 300px; height: 300px; display:block; margin:auto"
                           autoplay
                           loop>
                       </dotlottie-wc>
@@ -387,9 +386,9 @@ $recent_posts = $recent_stmt->get_result();
               <?php while ($post = $recent_posts->fetch_assoc()): ?>
                 <div class="post-item">
 
-                      <?php if (!empty($blog['image_url'])): ?>
+                      <?php if (!empty($post['image_url'])): ?>
 
-                          <img src="dashboard/<?php echo $post['image_url'] ?: 'assets/img/blog/default-square.jpg'; ?>" 
+                          <img src="dashboard/<?php echo $post['image_url']; ?>" 
                             alt="<?php echo htmlspecialchars($post['title']); ?>" 
                             class="flex-shrink-0">
 
@@ -397,7 +396,6 @@ $recent_posts = $recent_stmt->get_result();
 
                           <dotlottie-wc
                               src="https://lottie.host/4ca8fb55-0007-4af3-b062-c0c7bd96b2e7/wtRDuQLkqL.lottie"
-                              style="width: 300px; height: 300px; display:block; margin:auto"
                               autoplay
                               loop>
                           </dotlottie-wc>

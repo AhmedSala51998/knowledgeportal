@@ -207,7 +207,7 @@ while ($row = $blogs_result->fetch_assoc()) {
 
                                   <dotlottie-wc
                                       src="https://lottie.host/4ca8fb55-0007-4af3-b062-c0c7bd96b2e7/wtRDuQLkqL.lottie"
-                                      style="width: 300px; height: 300px; display:block; margin:auto"
+                                      class="featured-media"
                                       autoplay
                                       loop>
                                   </dotlottie-wc>
@@ -264,7 +264,7 @@ while ($row = $blogs_result->fetch_assoc()) {
 
                                   <dotlottie-wc
                                       src="https://lottie.host/4ca8fb55-0007-4af3-b062-c0c7bd96b2e7/wtRDuQLkqL.lottie"
-                                      style="width: 300px; height: 300px; display:block; margin:auto"
+                                      class="recent-media"
                                       autoplay
                                       loop>
                                   </dotlottie-wc>

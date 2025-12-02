@@ -2716,6 +2716,28 @@ section,
   transition: transform 0.3s ease;
 }
 
+/* نفس مساحة الصورة */
+.featured-media {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+  border-radius: 0; /* لو كنت عامل radius للصورة */
+}
+
+/* اللوتي لازم نحاوطه داخل div لأن object-fit مش شغال عليه مباشرة */
+.recent-posts .featured-img dotlottie-wc {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* تأثير السكيل عند الـ hover */
+.recent-posts .featured-post:hover .featured-img .featured-media {
+  transform: scale(1.05);
+}
+
 .recent-posts .featured-badge {
   position: absolute;
   top: 20px;
@@ -2851,6 +2873,26 @@ section,
   height: 100%;
   object-fit: cover;
   transition: transform 0.3s ease;
+}
+
+/* نفس حجم الصورة */
+.recent-img .recent-media {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+/* لأن object-fit لا يعمل على اللوتي مباشرة */
+.recent-img dotlottie-wc {
+  width: 100%;
+  height: 100%;
+}
+
+/* تأثير السكيل عند الـ hover */
+.recent-posts .recent-post:hover .recent-img .recent-media {
+  transform: scale(1.05);
 }
 
 .recent-posts .recent-content {
@@ -4745,10 +4787,13 @@ section,
   margin-bottom: 0;
 }
 
-.recent-posts-widget .post-item img {
+.recent-posts-widget .post-item img,
+.recent-posts-widget .post-item dotlottie-wc {
   width: 80px;
   margin-right: 15px;
+  object-fit: cover; /* بس الـLottie هياخد الحجم بدون تشويه */
 }
+
 
 .recent-posts-widget .post-item h4 {
   font-size: 15px;
