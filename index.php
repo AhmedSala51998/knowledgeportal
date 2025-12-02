@@ -856,7 +856,7 @@ while ($row = $blogs_result->fetch_assoc()) {
 
             <div class="faq-cta text-center mt-5" data-aos="fade-up" data-aos-delay="300">
               <p>هل لديك سؤال آخر؟ فريقنا موجود لمساعدتك!</p>
-              <a href="#" class="btn btn-primary">تواصل مع الدعم</a>
+              <a href="#team" class="btn btn-primary">تواصل مع الدعم</a>
             </div>
 
           </div>
