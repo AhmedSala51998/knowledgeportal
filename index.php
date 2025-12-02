@@ -264,7 +264,7 @@ while ($row = $blogs_result->fetch_assoc()) {
               </p>
 
               <div class="mt-4" data-aos="fade-right" data-aos-duration="1100">
-                <a href="#" class="btn-consultation">
+                <a href="#features" class="btn-consultation">
                   <span>اكتشف المزيد</span>
                   <i class="bi bi-arrow-left"></i>
                 </a>
