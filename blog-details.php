@@ -9,7 +9,7 @@ if (!isset($_GET['slug'])) {
     die("خطأ: لم يتم إرسال رقم المدونة.");
 }
 
-$slug = intval($_GET['slug']);
+$slug = $_GET['slug'];
 
 $sql = "SELECT * FROM blogs WHERE slug = $slug";
 $result = $conn->query($sql);
