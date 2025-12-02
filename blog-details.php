@@ -91,8 +91,8 @@ foreach ($system_ids as $sys_id) {
 
 
 // جلب آخر 5 مدونات ما عدا الحالية
-$recent_stmt = $conn->prepare("SELECT * FROM blogs WHERE id != ? ORDER BY created_at DESC LIMIT 5");
-$recent_stmt->bind_param("i", $blog_id);
+$recent_stmt = $conn->prepare("SELECT * FROM blogs WHERE slug != ? ORDER BY created_at DESC LIMIT 5");
+$recent_stmt->bind_param("i", $slug);
 $recent_stmt->execute();
 $recent_posts = $recent_stmt->get_result();
 
