@@ -167,10 +167,18 @@ while ($row = $blogs_result->fetch_assoc()) {
               <div class="col-lg-8" data-aos="fade-up" data-aos-delay="100">
                 <?php if (empty($blogs)): ?>
 
-                  <div class="text-center my-5" dir="rtl">
+                  <div style="
+                      height: 60vh;
+                      display: flex;
+                      flex-direction: column;
+                      justify-content: center;
+                      align-items: center;
+                      text-align: center;
+                  " dir="rtl">
+
                       <dotlottie-wc 
                           src="https://lottie.host/6d7d98df-8530-40e5-a812-a9fcf1bb6178/M2mgko81So.lottie" 
-                          style="width: 300px; height: 300px" 
+                          style="width: 300px; height: 300px"
                           autoplay loop>
                       </dotlottie-wc>
 
@@ -182,6 +190,7 @@ while ($row = $blogs_result->fetch_assoc()) {
                               لا توجد مدونات حالياً.
                           <?php endif; ?>
                       </h3>
+
                   </div>
 
                   <?php endif; ?>
