@@ -2,23 +2,17 @@
 require_once 'dashboard/config.php';
 require_once 'dashboard/track_visit.php';
 
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-
 $conn = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
 $conn->set_charset("utf8mb4");
 
-if (!isset($_GET['slug'])) {
+if (!isset($_GET['id'])) {
     die("خطأ: لم يتم إرسال رقم المدونة.");
 }
 
-$slug = urldecode($_GET['slug']);
+$blog_id = intval($_GET['id']);
 
-$stmt = $conn->prepare("SELECT * FROM blogs WHERE slug = ?");
-$stmt->bind_param("s", $slug);
-$stmt->execute();
-$result = $stmt->get_result();
+$sql = "SELECT * FROM blogs WHERE id = $blog_id";
+$result = $conn->query($sql);
 
 if ($result->num_rows == 0) {
     die("لم يتم العثور على هذه المدونة.");
@@ -97,8 +91,8 @@ foreach ($system_ids as $sys_id) {
 
 
 // جلب آخر 5 مدونات ما عدا الحالية
-$recent_stmt = $conn->prepare("SELECT * FROM blogs WHERE slug != ? ORDER BY created_at DESC LIMIT 5");
-$recent_stmt->bind_param("i", $slug);
+$recent_stmt = $conn->prepare("SELECT * FROM blogs WHERE id != ? ORDER BY created_at DESC LIMIT 5");
+$recent_stmt->bind_param("i", $blog_id);
 $recent_stmt->execute();
 $recent_posts = $recent_stmt->get_result();
 
@@ -301,8 +295,8 @@ $recent_posts = $recent_stmt->get_result();
 
                 <div class="meta-top">
                   <ul>
-                    <li class="d-flex align-items-center"><i style="margin-left:5px" class="bi bi-person"></i> <a href="blog-details.php?slug=<?php $slug; ?>">بوابة المعرفة</a></li>
-                    <li class="d-flex align-items-center"><i style="margin-left:5px" class="bi bi-clock"></i> <a href="blog-details.php?slug=<?php $slug; ?>><time datetime="<?php echo date('Y-m-d', strtotime($blog['created_at'])); ?>"> <?php echo getArabicDate($blog['created_at']); ?></time></a></li>
+                    <li class="d-flex align-items-center"><i style="margin-left:5px" class="bi bi-person"></i> <a href="blog-details.php?id=<?php $blog_id; ?>">بوابة المعرفة</a></li>
+                    <li class="d-flex align-items-center"><i style="margin-left:5px" class="bi bi-clock"></i> <a href="blog-details.php?id=<?php $blog_id; ?>><time datetime="<?php echo date('Y-m-d', strtotime($blog['created_at'])); ?>"> <?php echo getArabicDate($blog['created_at']); ?></time></a></li>
                   </ul>
                 </div><!-- End meta top -->
 
