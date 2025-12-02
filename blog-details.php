@@ -258,7 +258,12 @@ $recent_posts = $recent_stmt->get_result();
                 </div><!-- End meta top -->
 
                 <div class="content">
-                  <?php echo nl2br(strip_tags($blog['content'])); ?>
+                  <?php
+                    $clean = strip_tags($blog['content']);
+                    $clean = html_entity_decode($clean, ENT_QUOTES, 'UTF-8');
+                    $clean = trim($clean);
+                    echo nl2br($clean);
+                  ?>
 
                   <blockquote>
                     <p>
@@ -419,12 +424,12 @@ $recent_posts = $recent_stmt->get_result();
             <div class="tags-widget widget-item">
               <h3 class="widget-title">مدونات تهمك</h3>
               <ul>
-                <li><a href="blog.php">إقامة</a></li>
-                <li><a href="blog.php">عمالة</a></li>
-                <li><a href="blog.php">قوانين</a></li>
-                <li><a href="blog.php">خدمات رقمية</a></li>
-                <li><a href="blog.php">أبشر</a></li>
-                <li><a href="blog.php">نصائح</a></li>
+                <li><a href="blog.php?search=إقامة">إقامة</a></li>
+                <li><a href="blog.php?search=عمالة">عمالة</a></li>
+                <li><a href="blog.php?search=قوانين">قوانين</a></li>
+                <li><a href="blog.php?search=خدمات رقمية">خدمات رقمية</a></li>
+                <li><a href="blog.php?search=أبشر">أبشر</a></li>
+                <li><a href="blog.php?search=نصائح">نصائح</a></li>
               </ul>
             </div><!--/Tags Widget -->
 
