@@ -126,7 +126,7 @@ $result = mysqli_query($conn, $sql);
                 <h5 class="mb-3">
                     👤 عدد الزوار الفريدين: 
                     <span class="badge bg-success">
-                        <?php echo mysqli_num_rows(mysqli_query($conn, "SELECT DISTINCT visitor_id FROM visitors")); ?>
+                        <?php echo mysqli_num_rows(mysqli_query($conn, "SELECT DISTINCT ip_address FROM visitors")); ?>
                     </span>
                 </h5>
 
