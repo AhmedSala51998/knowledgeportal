@@ -1503,7 +1503,7 @@ $systems_result = mysqli_query($conn, $sql);
                                                         </div>
                                                         <div class="collapse show" id="articleBody<?php echo $article['id']; ?>">
                                                         
-                                                        <p class="card-text"><?php echo nl2br(substr($article['content'], 0, 200)) . (strlen($article['content']) > 200 ? '...' : ''); ?></p>
+                                                        <p class="card-text"><?php echo nl2br($article['content']); ?></p>
                                                         
                                                         <?php
                                                         // الحصول على الجهة المعنية
