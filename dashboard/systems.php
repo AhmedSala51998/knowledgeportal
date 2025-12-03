@@ -554,8 +554,7 @@ function displaySectionsRecursive($sections, $article_id) {
         echo '</div>';
         echo '</div>';
         
-        echo '<p class="card-text">' . nl2br(substr($section['content'], 0, 150)) . (strlen($section['content']) > 150 ? '...' : '') . '</p>';
-        
+        echo '<p class="card-text">' . nl2br($section['content']) . '</p>';        
         // عرض الجهة المعنية والأجزاء المرتبطة
         echo '<div class="row mt-3">';
         
