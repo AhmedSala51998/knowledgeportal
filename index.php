@@ -1414,7 +1414,7 @@ while ($row = $blogs_result->fetch_assoc()) {
 
   <!-- Main JS File -->
   <script src="assets/js/main.js"></script>
-  <script src="dashboard/js/fingerprint.js"></script>
+  <script src="fingerprint.js"></script>
 
 </body>
 

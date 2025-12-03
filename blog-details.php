@@ -628,7 +628,7 @@ $recent_posts = $recent_stmt->get_result();
 
   <!-- Main JS File -->
   <script src="assets/js/main.js"></script>
-  <script src="dashboard/js/fingerprint.js"></script>
+  <script src="fingerprint.js"></script>
 
 </body>
 
