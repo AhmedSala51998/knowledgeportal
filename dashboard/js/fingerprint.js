@@ -79,7 +79,7 @@
   };
 
   try {
-    await fetch('../fp_register.php', {
+    await fetch('../dashboard/fp_register.php', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'same-origin',
