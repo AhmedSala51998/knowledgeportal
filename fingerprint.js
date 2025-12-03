@@ -17,14 +17,13 @@
     ].join('###');
   }
 
-  // Canvas fingerprint (رسمة خفيفة)
+  // Canvas fingerprint
   function getCanvasFp() {
     try {
       const canvas = document.createElement('canvas');
       const ctx = canvas.getContext('2d');
       ctx.textBaseline = "top";
       ctx.font = "14px 'Arial'";
-      ctx.textBaseline = "alphabetic";
       ctx.fillStyle = "#f60";
       ctx.fillRect(125,1,62,20);
       ctx.fillStyle = "#069";
@@ -37,7 +36,7 @@
     }
   }
 
-  // WebGL renderer info (optional)
+  // WebGL renderer info
   function getWebGLFp() {
     try {
       const canvas = document.createElement('canvas');
@@ -52,26 +51,21 @@
     }
   }
 
-  // Hash function SHA-256 -> hex
+  // Hash function SHA-256
   async function sha256hex(str) {
     const enc = new TextEncoder();
     const buf = await crypto.subtle.digest('SHA-256', enc.encode(str));
-    return Array.prototype.map.call(new Uint8Array(buf), x => ('00' + x.toString(16)).slice(-2)).join('');
+    return Array.from(new Uint8Array(buf)).map(x => ('00'+x.toString(16)).slice(-2)).join('');
   }
 
   // جمع البيانات
-  const data = [
-    getBasic(),
-    getCanvasFp(),
-    getWebGLFp()
-  ].join('||');
-
+  const data = [getBasic(), getCanvasFp(), getWebGLFp()].join('||');
   const fp = await sha256hex(data);
 
   // ضع cookie محلياً (مدة سنة)
   document.cookie = "fpid=" + fp + "; path=/; max-age=" + (365*24*60*60) + "; SameSite=Lax";
 
-  // أرسل للسيرفر لتسجيل/استرجاع visitor_id (POST)
+  // أرسل للسيرفر لتسجيل/استرجاع visitor_id
   const payload = {
     fingerprint: fp,
     page_url: location.pathname + location.search,
@@ -85,9 +79,7 @@
       credentials: 'same-origin',
       body: JSON.stringify(payload)
     });
-    // لا نحتاج الاستجابة هنا، السيرفر يضع cookie visitor_id
   } catch (e) {
-    // لا نقطع عرض الصفحة لو فشل الاتصال
     console.warn('FP registration failed', e);
   }
 })();
