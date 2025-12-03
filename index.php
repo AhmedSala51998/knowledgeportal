@@ -1,6 +1,5 @@
 <?php
 require_once 'dashboard/config.php';
-require_once 'dashboard/track_visit.php';
 
 // الاتصال
 $conn = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
@@ -1415,6 +1414,7 @@ while ($row = $blogs_result->fetch_assoc()) {
 
   <!-- Main JS File -->
   <script src="assets/js/main.js"></script>
+  <script src="dashboard/js/fingerprint.js"></script>
 
 </body>
 
