@@ -1,6 +1,6 @@
 <?php
 // fp_register.php
-require_once 'config.php'; // هذا الملف يجب أن يعرف $conn (mysqli)
+require_once 'dashboard/config.php'; // هذا الملف يجب أن يعرف $conn (mysqli)
 header('Content-Type: application/json');
 
 // اقرأ JSON
