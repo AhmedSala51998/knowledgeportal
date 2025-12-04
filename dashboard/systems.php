@@ -910,7 +910,7 @@ function displaySectionsRecursive($sections, $article_id) {
 
             <!-- نص الشرح مع إزاحة -->
             <div style="
-                padding-right:32px;   /* يزح السطور كلها */
+                padding-right:62px;   /* يزح السطور كلها */
                 line-height:1.9;
                 color:#000;
             ">
