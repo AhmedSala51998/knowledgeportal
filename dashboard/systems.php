@@ -910,7 +910,7 @@ function displaySectionsRecursive($sections, $article_id) {
 
             <!-- نص الشرح مع إزاحة -->
             <div style="
-                padding-right:68px;   /* يزح السطور كلها */
+                padding-right:70px;   /* يزح السطور كلها */
                 line-height:1.9;
                 color:#000;
             ">
@@ -1905,9 +1905,38 @@ $systems_result = mysqli_query($conn, $sql);
                                                             <?php echo nl2br($article['content']); ?>
                                                        </p>
 
-                                                        <div style="background:#f8f9fa; border-right:4px solid #0d6efd; padding:10px; margin-top:10px;border-radius:6px;">
-                                                            <strong>📘 الشرح:</strong><br>
-                                                            <?php echo nl2br($article['explanation']); ?>
+                                                        <div style="
+                                                            background:#f8f9fa;
+                                                            border-right:4px solid #0d6efd;
+                                                            padding:15px;
+                                                            margin-top:10px;
+                                                            border-radius:6px;
+                                                            direction:rtl;
+                                                            text-align:right;
+                                                        ">
+
+                                                            <!-- العنوان -->
+                                                            <div style="
+                                                                display:flex;
+                                                                align-items:center;
+                                                                gap:6px;
+                                                                font-weight:bold;
+                                                                margin-bottom:8px;
+                                                                color:#0d47a1;
+                                                            ">
+                                                                <span style="font-size:20px;">📘</span>
+                                                                <span>الشرح:</span>
+                                                            </div>
+
+                                                            <!-- النص المزاح -->
+                                                            <div style="
+                                                                padding-right:70px;  /* مقدار الإزاحة لكل السطور */
+                                                                line-height:1.9;
+                                                                color:#000;
+                                                            ">
+                                                                <?php echo nl2br($article['explanation']); ?>
+                                                            </div>
+
                                                         </div>
                                                         
                                                         <?php
