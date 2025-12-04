@@ -230,8 +230,8 @@ $result = mysqli_query($conn, "SELECT * FROM usages ORDER BY created_at DESC");
 
     <!-- المحتوى الرئيسي -->
     <div class="col-md-10">
-      <div class="top-navbar">
-          <div class="d-flex justify-content-between align-items-center px-4" style="margin-bottom:20px">
+      <div class="top-navbar" style="margin-bottom:20px">
+          <div class="d-flex justify-content-between align-items-center px-4">
               <h2>الاستخدامات</h2>
               <div class="user-info">
                   <span>مرحباً، <?php echo $_SESSION['username']; ?></span>
