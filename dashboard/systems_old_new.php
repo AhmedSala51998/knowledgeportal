@@ -6,7 +6,7 @@ require_once 'config.php';
 requireLogin();
 
 // دالة معالجة الأجزاء بشكل متكرر
-/*function processSections($sections, $article_id, $parent_id = null) {
+function processSections($sections, $article_id, $parent_id = null) {
     global $conn;
 
     foreach ($sections as $section) {
@@ -24,63 +24,6 @@ requireLogin();
             $section_id = mysqli_insert_id($conn);
 
             // معالجة مراجع الجزء
-            if (!empty($section['references']) && is_array($section['references'])) {
-                foreach ($section['references'] as $reference_id) {
-                    $sql = "INSERT INTO section_references (section_id, referenced_section_id) VALUES (?, ?)";
-                    $stmt = mysqli_prepare($conn, $sql);
-                    mysqli_stmt_bind_param($stmt, "ii", $section_id, $reference_id);
-                    mysqli_stmt_execute($stmt);
-                }
-            }
-
-            // معالجة الأجزاء الفرعية
-            if (isset($section['subsections']) && is_array($section['subsections'])) {
-                processSections($section['subsections'], $article_id, $section_id);
-            }
-        }
-    }
-}*/
-
-function processSections($sections, $article_id, $parent_id = null) {
-    global $conn;
-
-    foreach ($sections as $section) {
-        if (!empty($section['title'])) {
-
-            $section_title = cleanInput($section['title']);
-            $section_content = cleanInput($section['content']);
-            $section_explanation = !empty($section['explanation']) 
-                                    ? cleanInput($section['explanation']) 
-                                    : null;
-
-            $entity_id = !empty($section['entity_id']) ? cleanInput($section['entity_id']) : null;
-            $usage_id  = !empty($section['usage_id'])  ? cleanInput($section['usage_id'])  : null;
-
-            // ============== UPDATE SQL ==============
-            $sql = "INSERT INTO sections 
-                    (article_id, parent_id, title, content, explanation, entity_id, usage_id) 
-                    VALUES (?, ?, ?, ?, ?, ?, ?)";
-
-            $stmt = mysqli_prepare($conn, $sql);
-
-            // ملاحظة: explanation نص → نوعه s
-            mysqli_stmt_bind_param(
-                $stmt, 
-                "iisssii", 
-                $article_id, 
-                $parent_id, 
-                $section_title, 
-                $section_content,
-                $section_explanation,
-                $entity_id, 
-                $usage_id
-            );
-
-            mysqli_stmt_execute($stmt);
-
-            $section_id = mysqli_insert_id($conn);
-
-            // معالجة المراجع
             if (!empty($section['references']) && is_array($section['references'])) {
                 foreach ($section['references'] as $reference_id) {
                     $sql = "INSERT INTO section_references (section_id, referenced_section_id) VALUES (?, ?)";
@@ -374,7 +317,7 @@ use PhpOffice\PhpWord\IOFactory;
     }
 }*/
 
-/*function processWordFile($file_path, $system_id) {
+function processWordFile($file_path, $system_id) {
     global $conn;
 
     try {
@@ -547,281 +490,9 @@ use PhpOffice\PhpWord\IOFactory;
             'error' => $e->getMessage()
         ];
     }
-}*/
-
-
-function processWordFile($file_path, $system_id) {
-    global $conn;
-
-    try {
-        $phpWord = IOFactory::load($file_path);
-        $text = '';
-
-        foreach ($phpWord->getSections() as $section) {
-            $elements = $section->getElements();
-            foreach ($elements as $element) {
-                if (method_exists($element, 'getText')) {
-                    $text .= $element->getText() . "\n";
-                }
-            }
-        }
-
-        $lines = explode("\n", $text);
-
-        $articles_count = 0;
-        $sections_count = 0;
-
-        $current_article_id = null;
-        $stack = [];
-
-        $content_map = [];
-        $explanation_map = [];
-        $usage_map = [];
-        $entity_map = [];
-
-        $article_content = "";
-        $article_explanation = "";
-        $article_usage = "";
-        $article_entity = "";
-
-        foreach ($lines as $line) {
-            $line = trim($line);
-            if (empty($line)) continue;
-
-            // Normalize
-            $line = preg_replace('/^(\d+)\s*مادة$/u', 'مادة $1', $line);
-            $line = preg_replace('/^مادة(\d+)/u', 'مادة $1', $line);
-            $line = preg_replace('/^(\d+)\s*الجزء$/u', 'الجزء $1', $line);
-            $line = preg_replace('/^الجزء(\d+)/u', 'الجزء $1', $line);
-
-            // ======= مادة جديدة =======
-            if (preg_match('/^(?:المادة|مادة)\s*(\d+)/u', $line)) {
-
-                // أغلق جميع الأجزاء المفتوحة
-                while (!empty($stack)) {
-                    $id = array_pop($stack);
-
-                    $sql = "UPDATE sections 
-                            SET content = ?, explanation = ?, usage_id = ?, entity_id = ? 
-                            WHERE id = ?";
-                    $stmt = mysqli_prepare($conn, $sql);
-                    $stmt->bind_param("ssssi",
-                        $content_map[$id],
-                        $explanation_map[$id],
-                        $usage_map[$id],
-                        $entity_map[$id],
-                        $id
-                    );
-                    $stmt->execute();
-                }
-
-                // اغلاق المادة الحالية
-                if ($current_article_id !== null) {
-                    $sql = "UPDATE articles 
-                            SET content = ?, explanation = ?, usage_id = ?, entity_id = ? 
-                            WHERE id = ?";
-                    $stmt = mysqli_prepare($conn, $sql);
-                    $stmt->bind_param("ssssi",
-                        $article_content,
-                        $article_explanation,
-                        $article_usage,
-                        $article_entity,
-                        $current_article_id
-                    );
-                    $stmt->execute();
-                }
-
-                // إنشاء مادة جديدة
-                $article_title = cleanInput($line);
-
-                $sql = "INSERT INTO articles (system_id, title, content, explanation, usage_id, entity_id) 
-                        VALUES (?, ?, '', '', '', '')";
-                $stmt = mysqli_prepare($conn, $sql);
-                $stmt->bind_param("is", $system_id, $article_title);
-                $stmt->execute();
-
-                $current_article_id = $conn->insert_id;
-                $articles_count++;
-
-                $article_content = "";
-                $article_explanation = "";
-                $article_usage = "";
-                $article_entity = "";
-
-                continue;
-            }
-
-            // ======= جزء / جزء فرعي =======
-            else if (preg_match('/^(الجزء(?:\s+الفرعي)*)\s*(\d+)/u', $line, $matches)) {
-
-                $level = substr_count($matches[1], 'الفرعي');
-                $title = cleanInput($line);
-
-                // اغلاق المستويات
-                while (count($stack) > $level) {
-                    $id = array_pop($stack);
-
-                    $sql = "UPDATE sections 
-                            SET content = ?, explanation = ?, usage_id = ?, entity_id = ? 
-                            WHERE id = ?";
-                    $stmt = mysqli_prepare($conn, $sql);
-                    $stmt->bind_param("ssssi",
-                        $content_map[$id],
-                        $explanation_map[$id],
-                        $usage_map[$id],
-                        $entity_map[$id],
-                        $id
-                    );
-                    $stmt->execute();
-                }
-
-                $parent_id = !empty($stack) ? end($stack) : null;
-
-                // INSERT مع explanation
-                $sql = "INSERT INTO sections 
-                        (article_id, title, content, explanation, parent_id, usage_id, entity_id) 
-                        VALUES (?, ?, '', '', ?, '', '')";
-
-                $stmt = mysqli_prepare($conn, $sql);
-                $stmt->bind_param("isi", $current_article_id, $title, $parent_id);
-                $stmt->execute();
-
-                $new_id = $conn->insert_id;
-
-                $stack[] = $new_id;
-                $content_map[$new_id] = "";
-                $explanation_map[$new_id] = "";
-                $usage_map[$new_id] = "";
-                $entity_map[$new_id] = "";
-
-                $sections_count++;
-                continue;
-            }
-
-            // ======= الشرح =======
-            else if (preg_match('/^الشرح[:：]?\s*(.+)$/u', $line, $m)) {
-
-                $value = trim($m[1]);
-
-                if (!empty($stack)) {
-                    $explanation_map[end($stack)] .= 
-                        ($explanation_map[end($stack)] ? "\n" : "") . $value;
-                } else {
-                    $article_explanation .= ($article_explanation ? "\n" : "") . $value;
-                }
-
-                continue;
-            }
-
-            // ======= الاستخدامات =======
-            else if (preg_match('/^الاستخدامات[:：]?\s*(.+)$/u', $line, $m)) {
-
-                $values = implode(',', array_map('trim', preg_split('/[,،]/u', $m[1])));
-
-                if (!empty($stack)) {
-                    $usage_map[end($stack)] = $values;
-                } else {
-                    $article_usage = $values;
-                }
-
-                continue;
-            }
-
-            // ======= الجهات المعنية =======
-            else if (preg_match('/^الجهات\s*المعنية[:：]?\s*(.+)$/u', $line, $m)) {
-
-                $values = implode(',', array_map('trim', preg_split('/[,،]/u', $m[1])));
-
-                if (!empty($stack)) {
-                    $entity_map[end($stack)] = $values;
-                } else {
-                    $article_entity = $values;
-                }
-
-                continue;
-            }
-
-            // ======= المواد المرتبطة =======
-            else if (preg_match('/^المواد\s*المرتبطة[:：]?\s*(.+)$/u', $line, $m)) {
-
-                $values = array_map('trim', preg_split('/[,،]/u', $m[1]));
-
-                $target_id = !empty($stack) ? end($stack) : $current_article_id;
-                $table = !empty($stack) ? "section_references" : "article_references";
-
-                foreach ($values as $ref) {
-                    $sql = "INSERT INTO $table (" . 
-                            (!empty($stack)
-                                ? "section_id, referenced_section_id"
-                                : "article_id, referenced_article_id"
-                            ) . ") VALUES (?, ?)";
-
-                    $stmt = mysqli_prepare($conn, $sql);
-                    $stmt->bind_param("ii", $target_id, $ref);
-                    $stmt->execute();
-                }
-
-                continue;
-            }
-
-            // ======= محتوى عادي =======
-            else {
-                if (!empty($stack)) {
-                    $id = end($stack);
-                    $content_map[$id] .= ($content_map[$id] ? "\n" : "") . $line;
-                } else {
-                    $article_content .= ($article_content ? "\n" : "") . $line;
-                }
-            }
-        }
-
-        // ======= إغلاق بقية الأجزاء =======
-        while (!empty($stack)) {
-            $id = array_pop($stack);
-
-            $sql = "UPDATE sections 
-                    SET content = ?, explanation = ?, usage_id = ?, entity_id = ? 
-                    WHERE id = ?";
-            $stmt = mysqli_prepare($conn, $sql);
-            $stmt->bind_param("ssssi",
-                $content_map[$id],
-                $explanation_map[$id],
-                $usage_map[$id],
-                $entity_map[$id],
-                $id
-            );
-            $stmt->execute();
-        }
-
-        // ======= إغلاق المادة =======
-        if ($current_article_id !== null) {
-            $sql = "UPDATE articles 
-                    SET content = ?, explanation = ?, usage_id = ?, entity_id = ? 
-                    WHERE id = ?";
-            $stmt = mysqli_prepare($conn, $sql);
-            $stmt->bind_param("ssssi",
-                $article_content,
-                $article_explanation,
-                $article_usage,
-                $article_entity,
-                $current_article_id
-            );
-            $stmt->execute();
-        }
-
-        return [
-            'success' => true,
-            'articles_count' => $articles_count,
-            'sections_count' => $sections_count
-        ];
-
-    } catch (Exception $e) {
-        return [
-            'success' => false,
-            'error' => $e->getMessage()
-        ];
-    }
 }
+
+
 
 // دالة لعرض الأجزاء بشكل متكرر
 function displaySectionsRecursive($sections, $article_id) {
@@ -1015,14 +686,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     if (!empty($article['title'])) {
                         $article_title = cleanInput($article['title']);
                         $article_content = cleanInput($article['content']);
-                        $article_explanation = !empty($article['explanation']) ? cleanInput($article['explanation']) : null;
                         $entity_id = !empty($article['entity_id']) ? cleanInput($article['entity_id']) : null;
                         $usage_id = !empty($article['usage_id']) ? cleanInput($article['usage_id']) : null;
 
-                        $sql = "INSERT INTO articles (system_id, title, content, explanation, entity_id, usage_id) 
-                                VALUES (?, ?, ?, ?, ?, ?)";
+                        $sql = "INSERT INTO articles (system_id, title, content, entity_id, usage_id) VALUES (?, ?, ?, ?, ?)";
                         $stmt = mysqli_prepare($conn, $sql);
-                        mysqli_stmt_bind_param($stmt, "isssii", $system_id, $article_title, $article_content, $article_explanation, $entity_id, $usage_id);
+                        mysqli_stmt_bind_param($stmt, "issii", $system_id, $article_title, $article_content, $entity_id, $usage_id);
                         mysqli_stmt_execute($stmt);
 
                         $article_id = mysqli_insert_id($conn);
@@ -1108,13 +777,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $article_id = cleanInput($_POST['article_id']);
         $title = cleanInput($_POST['article_title']);
         $content = cleanInput($_POST['article_content']);
-        $explanation = !empty($_POST['article_explanation']) ? cleanInput($_POST['article_explanation']) : null;
         $entity_id = !empty($_POST['entity_id']) ? cleanInput($_POST['entity_id']) : null;
         $usage_id = !empty($_POST['usage_id']) ? cleanInput($_POST['usage_id']) : null;
 
-        $sql = "UPDATE articles SET title = ?, content = ?, explanation = ?, entity_id = ?, usage_id = ? WHERE id = ?";
+        $sql = "UPDATE articles SET title = ?, content = ?, entity_id = ?, usage_id = ? WHERE id = ?";
         $stmt = mysqli_prepare($conn, $sql);
-        mysqli_stmt_bind_param($stmt, "sssiii", $title, $content, $explanation, $entity_id, $usage_id, $article_id);
+        mysqli_stmt_bind_param($stmt, "ssiii", $title, $content, $entity_id, $usage_id, $article_id);
 
         if (mysqli_stmt_execute($stmt)) {
             // حذف المراجع القديمة
@@ -1155,14 +823,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     // إضافة الجزء الرئيسي
                     $title = cleanInput($section['title']);
                     $content = cleanInput($section['content']);
-                    $explanation = !empty($section['explanation']) ? cleanInput($section['explanation']) : null;
                     $entity_id = !empty($section['entity_id']) ? cleanInput($section['entity_id']) : null;
                     $usage_id = !empty($section['usage_id']) ? cleanInput($section['usage_id']) : null;
 
-                    $sql = "INSERT INTO sections (article_id, title, content, explanation, entity_id, usage_id, parent_id) 
-                            VALUES (?, ?, ?, ?, ?, ?, NULL)";
+                    $sql = "INSERT INTO sections (article_id, title, content, entity_id, usage_id, parent_id) VALUES (?, ?, ?, ?, ?, NULL)";
                     $stmt = mysqli_prepare($conn, $sql);
-                    mysqli_stmt_bind_param($stmt, "isssii", $article_id, $title, $content, $explanation, $entity_id, $usage_id);
+                    mysqli_stmt_bind_param($stmt, "issii", $article_id, $title, $content, $entity_id, $usage_id);
                     mysqli_stmt_execute($stmt);
 
                     // الحصول على معرف الجزء الرئيسي المضاف
@@ -1185,14 +851,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             if (!empty($subsection['title']) || !empty($subsection['content'])) {
                                 $subsection_title = cleanInput($subsection['title']);
                                 $subsection_content = cleanInput($subsection['content']);
-                                $sub_explanation = !empty($subsection['explanation']) ? cleanInput($subsection['explanation']) : null;
                                 $subsection_entity_id = !empty($subsection['entity_id']) ? cleanInput($subsection['entity_id']) : null;
                                 $subsection_usage_id = !empty($subsection['usage_id']) ? cleanInput($subsection['usage_id']) : null;
 
-                               $sql = "INSERT INTO sections (article_id, title, content, explanation, entity_id, usage_id, parent_id) 
-                                        VALUES (?, ?, ?, ?, ?, ?, ?)";
+                                $sql = "INSERT INTO sections (article_id, title, content, entity_id, usage_id, parent_id) VALUES (?, ?, ?, ?, ?, ?)";
                                 $stmt = mysqli_prepare($conn, $sql);
-                                mysqli_stmt_bind_param($stmt, "isssiii", $article_id, $subsection_title, $subsection_content, $sub_explanation, $subsection_entity_id, $subsection_usage_id, $parent_section_id);
+                                mysqli_stmt_bind_param($stmt, "issiii", $article_id, $subsection_title, $subsection_content, $subsection_entity_id, $subsection_usage_id, $parent_section_id);
                                 mysqli_stmt_execute($stmt);
 
                                 // الحصول على معرف الجزء الفرعي المضاف
@@ -1220,14 +884,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             // إضافة الجزء الرئيسي
                             $title = cleanInput($section['title']);
                             $content = cleanInput($section['content']);
-                            $explanation = !empty($section['explanation']) ? cleanInput($section['explanation']) : null;
                             $entity_id = !empty($section['entity_id']) ? cleanInput($section['entity_id']) : null;
                             $usage_id = !empty($section['usage_id']) ? cleanInput($section['usage_id']) : null;
 
-                            $sql = "INSERT INTO sections (article_id, title, content, explanation, entity_id, usage_id, parent_id) 
-                            VALUES (?, ?, ?, ?, ?, ?, NULL)";
+                            $sql = "INSERT INTO sections (article_id, title, content, entity_id, usage_id, parent_id) VALUES (?, ?, ?, ?, ?, NULL)";
                             $stmt = mysqli_prepare($conn, $sql);
-                            mysqli_stmt_bind_param($stmt, "isssii", $article_id, $title, $content, $explanation, $entity_id, $usage_id);
+                            mysqli_stmt_bind_param($stmt, "issii", $article_id, $title, $content, $entity_id, $usage_id);
                             mysqli_stmt_execute($stmt);
 
                             // الحصول على معرف الجزء الرئيسي المضاف
@@ -1250,14 +912,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                     if (!empty($subsection['title']) || !empty($subsection['content'])) {
                                         $subsection_title = cleanInput($subsection['title']);
                                         $subsection_content = cleanInput($subsection['content']);
-                                        $sub_explanation = !empty($subsection['explanation']) ? cleanInput($subsection['explanation']) : null;
                                         $subsection_entity_id = !empty($subsection['entity_id']) ? cleanInput($subsection['entity_id']) : null;
                                         $subsection_usage_id = !empty($subsection['usage_id']) ? cleanInput($subsection['usage_id']) : null;
 
-                                        $sql = "INSERT INTO sections (article_id, title, content, explanation, entity_id, usage_id, parent_id) 
-                                        VALUES (?, ?, ?, ?, ?, ?, ?)";
+                                        $sql = "INSERT INTO sections (article_id, title, content, entity_id, usage_id, parent_id) VALUES (?, ?, ?, ?, ?, ?)";
                                         $stmt = mysqli_prepare($conn, $sql);
-                                        mysqli_stmt_bind_param($stmt, "isssiii", $article_id, $subsection_title, $subsection_content, $sub_explanation, $subsection_entity_id, $subsection_usage_id, $parent_section_id);
+                                        mysqli_stmt_bind_param($stmt, "issiii", $article_id, $subsection_title, $subsection_content, $subsection_entity_id, $subsection_usage_id, $parent_section_id);
                                         mysqli_stmt_execute($stmt);
 
                                         // الحصول على معرف الجزء الفرعي المضاف
@@ -1310,13 +970,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $section_id = cleanInput($_POST['section_id']);
         $title = cleanInput($_POST['section_title']);
         $content = cleanInput($_POST['section_content']);
-        $explanation = !empty($_POST['explanation']) ? cleanInput($_POST['explanation']) : null;
         $entity_id = !empty($_POST['entity_id']) ? cleanInput($_POST['entity_id']) : null;
         $usage_id = !empty($_POST['usage_id']) ? cleanInput($_POST['usage_id']) : null;
 
-        $sql = "UPDATE sections SET title = ?, content = ?, explanation = ?, entity_id = ?, usage_id = ? WHERE id = ?";
+        $sql = "UPDATE sections SET title = ?, content = ?, entity_id = ?, usage_id = ? WHERE id = ?";
         $stmt = mysqli_prepare($conn, $sql);
-        mysqli_stmt_bind_param($stmt, "sssiii", $title, $content, $explanation, $entity_id, $usage_id, $section_id);
+        mysqli_stmt_bind_param($stmt, "ssiii", $title, $content, $entity_id, $usage_id, $section_id);
 
         if (mysqli_stmt_execute($stmt)) {
             // حذف المراجع القديمة
@@ -1342,7 +1001,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     if (!empty($subsection['title']) || !empty($subsection['content'])) {
                         $subsection_title = cleanInput($subsection['title']);
                         $subsection_content = cleanInput($subsection['content']);
-                        $sub_explanation = !empty($subsection['explanation']) ? cleanInput($subsection['explanation']) : null;
                         $subsection_entity_id = !empty($subsection['entity_id']) ? cleanInput($subsection['entity_id']) : null;
                         $subsection_usage_id = !empty($subsection['usage_id']) ? cleanInput($subsection['usage_id']) : null;
 
@@ -1350,18 +1008,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         if (!empty($subsection['id'])) {
                             // تحديث الجزء الفرعي الموجود
                             $subsection_id = cleanInput($subsection['id']);
-                            $sql = "UPDATE sections SET title = ?, content = ?, explanation = ?, entity_id = ?, usage_id = ? WHERE id = ?";
+                            $sql = "UPDATE sections SET title = ?, content = ?, entity_id = ?, usage_id = ? WHERE id = ?";
                             $stmt = mysqli_prepare($conn, $sql);
-                            mysqli_stmt_bind_param(
-                                $stmt,
-                                "sssiii",
-                                $subsection_title,
-                                $subsection_content,
-                                $sub_explanation,
-                                $subsection_entity_id,
-                                $subsection_usage_id,
-                                $subsection_id
-                            );
+                            mysqli_stmt_bind_param($stmt, "ssiii", $subsection_title, $subsection_content, $subsection_entity_id, $subsection_usage_id, $subsection_id);
                             mysqli_stmt_execute($stmt);
 
                             // حذف المراجع القديمة
@@ -1381,20 +1030,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             $article_id = $row['article_id'];
 
                             // إضافة الجزء الفرعي الجديد
-                            $sql = "INSERT INTO sections (article_id, title, content, explanation, entity_id, usage_id, parent_id) 
-                            VALUES (?, ?, ?, ?, ?, ?, ?)";
+                            $sql = "INSERT INTO sections (article_id, title, content, entity_id, usage_id, parent_id) VALUES (?, ?, ?, ?, ?, ?)";
                             $stmt = mysqli_prepare($conn, $sql);
-                            mysqli_stmt_bind_param(
-                                $stmt,
-                                "isssiii",
-                                $article_id,
-                                $subsection_title,
-                                $subsection_content,
-                                $sub_explanation,
-                                $subsection_entity_id,
-                                $subsection_usage_id,
-                                $section_id
-                            );
+                            mysqli_stmt_bind_param($stmt, "issiii", $article_id, $subsection_title, $subsection_content, $subsection_entity_id, $subsection_usage_id, $section_id);
                             mysqli_stmt_execute($stmt);
                             $subsection_id = mysqli_insert_id($conn);
                         }
@@ -1425,13 +1063,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $system_id = cleanInput($_POST['system_id']);
         $title = cleanInput($_POST['article_title']);
         $content = cleanInput($_POST['article_content']);
-        $explanation = cleanInput($_POST['explanation']);
         $entity_id = !empty($_POST['entity_id']) ? cleanInput($_POST['entity_id']) : null;
 
-        $sql = "INSERT INTO articles (system_id, title, content, explanation, entity_id) 
-            VALUES (?, ?, ?, ?, ?)";
+        $sql = "INSERT INTO articles (system_id, title, content, entity_id) VALUES (?, ?, ?, ?)";
         $stmt = mysqli_prepare($conn, $sql);
-        mysqli_stmt_bind_param($stmt, "isssi", $system_id, $title, $content, $explanation, $entity_id);
+        mysqli_stmt_bind_param($stmt, "issi", $system_id, $title, $content, $entity_id);
 
         if (mysqli_stmt_execute($stmt)) {
             $article_id = mysqli_insert_id($conn);
@@ -1867,14 +1503,7 @@ $systems_result = mysqli_query($conn, $sql);
                                                         </div>
                                                         <div class="collapse show" id="articleBody<?php echo $article['id']; ?>">
                                                         
-                                                       <p class="card-text">
-                                                            <?php echo nl2br($article['content']); ?>
-                                                       </p>
-
-                                                        <div style="background:#f8f9fa; border-right:4px solid #0d6efd; padding:10px; margin-top:10px;">
-                                                            <strong>📘 الشرح:</strong><br>
-                                                            <?php echo nl2br($article['explanation']); ?>
-                                                        </div>
+                                                        <p class="card-text"><?php echo nl2br($article['content']); ?></p>
                                                         
                                                         <?php
                                                         // الحصول على الجهة المعنية
@@ -2030,10 +1659,6 @@ $systems_result = mysqli_query($conn, $sql);
                                                     <textarea class="form-control" id="article_content<?php echo $system['id']; ?>" name="article_content" rows="4"></textarea>
                                                 </div>
                                                 <div class="mb-3">
-                                                    <label for="article_explanation<?php echo $system['id']; ?>" class="form-label">شرح المادة</label>
-                                                    <textarea class="form-control" id="article_explanation<?php echo $system['id']; ?>" name="explanation" rows="4"></textarea>
-                                                </div>
-                                                <div class="mb-3">
                                                     <label for="article_entity<?php echo $system['id']; ?>" class="form-label">الجهة المعنية</label>
                                                     <select class="form-select" id="article_entity<?php echo $system['id']; ?>" name="entity_id">
                                                         <option value="">-- اختر جهة معنية --</option>
@@ -2168,10 +1793,6 @@ $systems_result = mysqli_query($conn, $sql);
                                 <textarea class="form-control" id="article_content<?php echo $article['id']; ?>" name="article_content" rows="4"><?php echo $article['content']; ?></textarea>
                             </div>
                             <div class="mb-3">
-                                <label for="article_explanation<?php echo $article['id']; ?>" class="form-label">شرح المادة</label>
-                                <textarea class="form-control" id="article_explanation<?php echo $article['id']; ?>" name="explanation" rows="4"><?php echo $article['content']; ?></textarea>
-                            </div>
-                            <div class="mb-3">
                                 <label for="article_entity<?php echo $article['id']; ?>" class="form-label">الجهة المعنية</label>
                                 <select class="form-select" id="article_entity<?php echo $article['id']; ?>" name="entity_id">
                                     <option value="">-- اختر جهة معنية --</option>
@@ -2251,10 +1872,6 @@ $systems_result = mysqli_query($conn, $sql);
                                                     <textarea class="form-control" name="sections[' . $section_num . '][content]" rows="3">' . htmlspecialchars($section['content']) . '</textarea>
                                                 </div>
                                                 <div class="mb-3">
-                                                    <label class="form-label">شرح الجزء</label>
-                                                    <textarea class="form-control" name="sections[' . $section_num . '][explanation]" rows="3">' . htmlspecialchars($section['explanation']) . '</textarea>
-                                                </div>
-                                                <div class="mb-3">
                                                     <label class="form-label">الجهة المعنية</label>
                                                     <select class="form-select" name="sections[' . $section_num . '][entity_id]">
                                                         <option value="">-- اختر جهة معنية --</option>';
@@ -2328,10 +1945,6 @@ $systems_result = mysqli_query($conn, $sql);
                                                                     <div class="mb-3">
                                                                         <label class="form-label">محتوى الجزء الفرعي</label>
                                                                         <textarea class="form-control" name="sections[' . $section_num . '][subsections][' . $subsection_num . '][content]" rows="3">' . htmlspecialchars($subsection['content']) . '</textarea>
-                                                                    </div>
-                                                                    <div class="mb-3">
-                                                                        <label class="form-label">شرح الجزء الفرعي</label>
-                                                                        <textarea class="form-control" name="sections[' . $section_num . '][subsections][' . $subsection_num . '][explanation]" rows="3">' . htmlspecialchars($subsection['explanation']) . '</textarea>
                                                                     </div>
                                                                     <div class="mb-3">
                                                                         <label class="form-label">الجهة المعنية</label>
@@ -2433,10 +2046,6 @@ $systems_result = mysqli_query($conn, $sql);
                                 <textarea class="form-control" id="section_content<?php echo $section['id']; ?>" name="section_content" rows="4"><?php echo $section['content']; ?></textarea>
                             </div>
                             <div class="mb-3">
-                                <label for="section_explanation<?php echo $section['id']; ?>" class="form-label">شرح الجزء</label>
-                                <textarea class="form-control" id="section_explanation<?php echo $section['id']; ?>" name="explanation" rows="4"><?php echo $section['explanation']; ?></textarea>
-                            </div>
-                            <div class="mb-3">
                                 <label for="section_entity<?php echo $section['id']; ?>" class="form-label">الجهة المعنية</label>
                                 <select class="form-select" id="section_entity<?php echo $section['id']; ?>" name="entity_id">
                                     <option value="">-- اختر جهة معنية --</option>
@@ -2512,10 +2121,6 @@ $systems_result = mysqli_query($conn, $sql);
                                                 <div class="mb-3">
                                                     <label class="form-label">محتوى الجزء الفرعي</label>
                                                     <textarea class="form-control" name="subsections[' . $subsection_num . '][content]" rows="3">' . htmlspecialchars($subsection['content']) . '</textarea>
-                                                </div>
-                                                <div class="mb-3">
-                                                    <label class="form-label">شرح الجزء الفرعي</label>
-                                                    <textarea class="form-control" name="subsections[' . $subsection_num . '][content]" rows="3">' . htmlspecialchars($subsection['explanation']) . '</textarea>
                                                 </div>
                                                 <div class="mb-3">
                                                     <label class="form-label">الجهة المعنية</label>
@@ -2739,10 +2344,6 @@ $systems_result = mysqli_query($conn, $sql);
                             <textarea class="form-control" name="articles[${articleCount}][content]" rows="3"></textarea>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">شرح المادة</label>
-                            <textarea class="form-control" name="articles[${articleCount}][explanation]" rows="3"></textarea>
-                        </div>
-                        <div class="mb-3">
                             <label class="form-label">الجهة المعنية</label>
                             <select class="form-select" name="articles[${articleCount}][entity_id]">
                                 <option value="">-- اختر جهة معنية --</option>
@@ -2837,10 +2438,6 @@ $systems_result = mysqli_query($conn, $sql);
                         <div class="mb-3">
                             <label class="form-label">محتوى الجزء</label>
                             <textarea class="form-control" name="articles[${articleId}][sections][${sectionCount[articleId]}][content]" rows="3"></textarea>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">شرح الجزء</label>
-                            <textarea class="form-control" name="articles[${articleId}][sections][${sectionCount[articleId]}][explanation]" rows="3"></textarea>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">الجهة المعنية</label>
@@ -2948,10 +2545,6 @@ $systems_result = mysqli_query($conn, $sql);
                             <textarea class="form-control" name="subsections[${subsectionCountEditSection[sectionId]}][content]" rows="3"></textarea>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">شرح الجزء الفرعي</label>
-                            <textarea class="form-control" name="subsections[${subsectionCountEditSection[sectionId]}][explanation]" rows="3"></textarea>
-                        </div>
-                        <div class="mb-3">
                             <label class="form-label">الجهة المعنية</label>
                             <select class="form-select" name="subsections[${subsectionCountEditSection[sectionId]}][entity_id]">
                                 <option value="">-- اختر جهة معنية --</option>
@@ -3040,10 +2633,6 @@ $systems_result = mysqli_query($conn, $sql);
                         <div class="mb-3">
                             <label class="form-label">محتوى الجزء الفرعي</label>
                             <textarea class="form-control" name="sections[${sectionId}][subsections][${subsectionCount[articleId][sectionId]}][content]" rows="3"></textarea>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">شرح الجزء الفرعي</label>
-                            <textarea class="form-control" name="sections[${sectionId}][subsections][${subsectionCount[articleId][sectionId]}][explanation]" rows="3"></textarea>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">الجهة المعنية</label>
@@ -3155,10 +2744,6 @@ $systems_result = mysqli_query($conn, $sql);
                             <textarea class="form-control" name="sections[${index}][content]" rows="3"></textarea>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">شرح الجزء</label>
-                            <textarea class="form-control" name="sections[${index}][explanation]" rows="3"></textarea>
-                        </div>
-                        <div class="mb-3">
                             <label class="form-label">الجهة المعنية</label>
                             <select class="form-select" name="sections[${index}][entity_id]">
                                 <option value="">-- اختر جهة معنية --</option>
@@ -3245,10 +2830,6 @@ $systems_result = mysqli_query($conn, $sql);
                             <div class="mb-3">
                                 <label class="form-label">محتوى الجزء الفرعي</label>
                                 <textarea class="form-control" name="sections[${sectionIndex}][subsections][${subsectionIndex}][content]" rows="3"></textarea>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">شرح الجزء الفرعي</label>
-                                <textarea class="form-control" name="sections[${sectionIndex}][subsections][${subsectionIndex}][explanation]" rows="3"></textarea>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">الجهة المعنية</label>
@@ -3340,10 +2921,6 @@ $systems_result = mysqli_query($conn, $sql);
                                     <textarea class="form-control" name="sections[${subSectionIndex}][subsections][${subsubsectionIndex}][subsubsections][${subsubsectionIdx}][content]" rows="3"></textarea>
                                 </div>
                                 <div class="mb-3">
-                                    <label class="form-label">شرح الجزء الفرعي</label>
-                                    <textarea class="form-control" name="sections[${subSectionIndex}][subsections][${subsubsectionIndex}][subsubsections][${subsubsectionIdx}][explanation]" rows="3"></textarea>
-                                </div>
-                                <div class="mb-3">
                                 <label class="form-label">الجهة المعنية</label>
                                 <select class="form-select" name="sections[${sectionIndex}][subsections][${subsectionIndex}][entity_id]">
                                     <option value="">-- اختر جهة معنية --</option>
@@ -3425,10 +3002,6 @@ $systems_result = mysqli_query($conn, $sql);
                         <div class="mb-3">
                             <label class="form-label">محتوى الجزء</label>
                             <textarea class="form-control" name="sections[${index}][content]" rows="3"></textarea>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">شرح الجزء</label>
-                            <textarea class="form-control" name="sections[${index}][explanation]" rows="3"></textarea>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">الجهة المعنية</label>
@@ -3519,10 +3092,6 @@ $systems_result = mysqli_query($conn, $sql);
                                 <textarea class="form-control" name="sections[${sectionIndex}][subsections][${subsectionIndex}][content]" rows="3"></textarea>
                             </div>
                             <div class="mb-3">
-                                <label class="form-label">شرح الجزء الفرعي</label>
-                                <textarea class="form-control" name="sections[${sectionIndex}][subsections][${subsectionIndex}][explanation]" rows="3"></textarea>
-                            </div>
-                            <div class="mb-3">
                                 <label class="form-label">الجهة المعنية</label>
                                 <select class="form-select" name="sections[${sectionIndex}][subsections][${subsectionIndex}][entity_id]">
                                     <option value="">-- اختر جهة معنية --</option>
@@ -3610,10 +3179,6 @@ $systems_result = mysqli_query($conn, $sql);
                                 <div class="mb-3">
                                     <label class="form-label">محتوى الجزء الفرعي</label>
                                     <textarea class="form-control" name="sections[${subSectionIndex}][subsections][${subsubsectionIndex}][subsubsections][${subsubsectionIdx}][content]" rows="3"></textarea>
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label">شرح الجزء الفرعي</label>
-                                    <textarea class="form-control" name="sections[${subSectionIndex}][subsections][${subsubsectionIndex}][subsubsections][${subsubsectionIdx}][explanation]" rows="3"></textarea>
                                 </div>
                                 <div class="mb-3">
                                 <label class="form-label">الجهة المعنية</label>
