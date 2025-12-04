@@ -139,7 +139,6 @@ $recent_posts = $recent_stmt->get_result();
     }
 
     .tree li a {
-        display: block;
         padding: 8px 12px;
         background: #f6f6f6;
         border-radius: 8px;
