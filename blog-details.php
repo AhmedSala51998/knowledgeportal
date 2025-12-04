@@ -151,7 +151,7 @@ $recent_posts = $recent_stmt->get_result();
 
     .tree li a:hover {
         background: #ffb85c;
-        color: #fff;
+        color: #fff !important;
     }
 
     .tree ul {
