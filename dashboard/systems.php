@@ -888,12 +888,22 @@ function displaySectionsRecursive($sections, $article_id) {
         <div style="
             background:#eef4ff;
             border-right:4px solid #0d6efd;
-            padding:10px;
+            padding:12px;
             margin-top:10px;
             border-radius:6px;
         ">
-            <strong>📘 الشرح:</strong><br>
-            ' . nl2br($section['explanation']) . '
+            <div style="font-weight:bold; margin-bottom:5px; color:#0d47a1;">
+                📘 الشرح:
+            </div>
+
+            <div style="
+                text-align:right;
+                line-height:1.9;
+                padding-right:45px;   /* مساحة بداية الأسطر */
+                text-indent:-45px;    /* إزاحة أول سطر */
+            ">
+                ' . nl2br($section['explanation']) . '
+            </div>
         </div>';
         // عرض الجهة المعنية والأجزاء المرتبطة
         echo '<div class="row mt-3">';
