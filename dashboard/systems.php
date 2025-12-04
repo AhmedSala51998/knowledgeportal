@@ -885,16 +885,16 @@ function displaySectionsRecursive($sections, $article_id) {
         
         echo '<p class="card-text">' . nl2br($section['content']) . '</p>';   
         echo '
-            <div style="
-                background:#f8f9fa;
-                border-right:4px solid #0d6efd;
-                padding:10px;
-                margin-top:10px;
-                border-radius:6px;
-            ">
-                <strong>🔍 الشرح:</strong><br>
-                ' . nl2br($section['explanation']) . '
-            </div>';     
+        <div style="
+            background:#eef4ff;
+            border-right:4px solid #0d6efd;
+            padding:10px;
+            margin-top:10px;
+            border-radius:6px;
+        ">
+            <strong>📘 الجزء:</strong><br>
+            ' . nl2br($section['title']) . '
+        </div>';
         // عرض الجهة المعنية والأجزاء المرتبطة
         echo '<div class="row mt-3">';
         
@@ -1882,7 +1882,7 @@ $systems_result = mysqli_query($conn, $sql);
                                                             <?php echo nl2br($article['content']); ?>
                                                        </p>
 
-                                                        <div style="background:#f8f9fa; border-right:4px solid #0d6efd; padding:10px; margin-top:10px;">
+                                                        <div style="background:#f8f9fa; border-right:4px solid #0d6efd; padding:10px; margin-top:10px;border-radius:6px;">
                                                             <strong>📘 الشرح:</strong><br>
                                                             <?php echo nl2br($article['explanation']); ?>
                                                         </div>
