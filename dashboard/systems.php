@@ -893,7 +893,7 @@ function displaySectionsRecursive($sections, $article_id) {
             border-radius:6px;
         ">
             <strong>📘 الجزء:</strong><br>
-            ' . nl2br($section['title']) . '
+            ' . nl2br($section['explanation']) . '
         </div>';
         // عرض الجهة المعنية والأجزاء المرتبطة
         echo '<div class="row mt-3">';
