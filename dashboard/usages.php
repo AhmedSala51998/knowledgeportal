@@ -230,9 +230,14 @@ $result = mysqli_query($conn, "SELECT * FROM usages ORDER BY created_at DESC");
 
     <!-- المحتوى الرئيسي -->
     <div class="col-md-10">
-      <div class="bg-white shadow-sm p-3 mb-4 d-flex justify-content-between">
-        <h2>الاستخدامات</h2>
-        <div>مرحباً، <?= $_SESSION['username']; ?></div>
+      <div class="top-navbar">
+          <div class="d-flex justify-content-between align-items-center px-4">
+              <h2>الاستخدامات</h2>
+              <div class="user-info">
+                  <span>مرحباً، <?php echo $_SESSION['username']; ?></span>
+                  <img src="https://picsum.photos/seed/user<?php echo $_SESSION['user_id']; ?>/40/40.jpg" alt="User Avatar">
+              </div>
+          </div>
       </div>
 
       <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addModal">
