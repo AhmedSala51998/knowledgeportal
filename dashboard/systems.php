@@ -1142,7 +1142,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $article_id = cleanInput($_POST['article_id']);
         $title = cleanInput($_POST['article_title']);
         $content = cleanInput($_POST['article_content']);
-        $explanation = !empty($_POST['article_explanation']) ? cleanInput($_POST['article_explanation']) : null;
+        $explanation = !empty($_POST['explanation']) ? cleanInput($_POST['explanation']) : null;
         $entity_id = !empty($_POST['entity_id']) ? cleanInput($_POST['entity_id']) : null;
         $usage_id = !empty($_POST['usage_id']) ? cleanInput($_POST['usage_id']) : null;
 
