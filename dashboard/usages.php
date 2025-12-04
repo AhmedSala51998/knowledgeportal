@@ -231,7 +231,7 @@ $result = mysqli_query($conn, "SELECT * FROM usages ORDER BY created_at DESC");
     <!-- المحتوى الرئيسي -->
     <div class="col-md-10">
       <div class="top-navbar">
-          <div class="d-flex justify-content-between align-items-center px-4">
+          <div class="d-flex justify-content-between align-items-center px-4" style="margin-bottom:20px">
               <h2>الاستخدامات</h2>
               <div class="user-info">
                   <span>مرحباً، <?php echo $_SESSION['username']; ?></span>
@@ -240,10 +240,11 @@ $result = mysqli_query($conn, "SELECT * FROM usages ORDER BY created_at DESC");
           </div>
       </div>
 
+      <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addModal">
+        <i class="fas fa-plus"></i> إضافة استخدام
+      </button>
+
       <div class="card">
-        <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addModal">
-          <i class="fas fa-plus"></i> إضافة استخدام
-        </button>
         <div class="card-body">
           <?php if(mysqli_num_rows($result) > 0): ?>
           <table class="table table-hover">
