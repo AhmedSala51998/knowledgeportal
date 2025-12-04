@@ -2203,7 +2203,7 @@ $systems_result = mysqli_query($conn, $sql);
                             </div>
                             <div class="mb-3">
                                 <label for="article_explanation<?php echo $article['id']; ?>" class="form-label">شرح المادة</label>
-                                <textarea class="form-control" id="article_explanation<?php echo $article['id']; ?>" name="explanation" rows="4"><?php echo $article['content']; ?></textarea>
+                                <textarea class="form-control" id="article_explanation<?php echo $article['id']; ?>" name="explanation" rows="4"><?php echo $article['explanation']; ?></textarea>
                             </div>
                             <div class="mb-3">
                                 <label for="article_entity<?php echo $article['id']; ?>" class="form-label">الجهة المعنية</label>
