@@ -883,7 +883,18 @@ function displaySectionsRecursive($sections, $article_id) {
         echo '</div>';
         echo '</div>';
         
-        echo '<p class="card-text">' . nl2br($section['content']) . '</p>';        
+        echo '<p class="card-text">' . nl2br($section['content']) . '</p>';   
+        echo '
+            <div style="
+                background:#f8f9fa;
+                border-right:4px solid #0d6efd;
+                padding:10px;
+                margin-top:10px;
+                border-radius:6px;
+            ">
+                <strong>🔍 الشرح:</strong><br>
+                ' . nl2br($section['explanation']) . '
+            </div>';     
         // عرض الجهة المعنية والأجزاء المرتبطة
         echo '<div class="row mt-3">';
         
